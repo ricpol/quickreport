@@ -1,0 +1,55 @@
+# -*- coding: utf8 -*-
+
+
+2. Come iniziare a usare Quickreport.
+=====================================
+
+2.1. Prerequisiti.
+------------------
+
+Quickreport è stato testato con wxPython 2.8.11, ma qualunque versione abbastanza recente dovrebbe andar bene. 
+Se si desidera l'output in Excel, occorre anche installare il pacchetto ``xlwt``  (http://pypi.python.org/pypi/xlwt). Comunque, se Quickreport non trova ``xlwt``, funziona lo stesso (senza l'output in Excel. 
+
+
+2.2. Installazione.
+-------------------
+
+Quickreport non necessita di particolari procedure di installazione. 
+Potete scegliere una di queste due opzioni: 
+
+1) copiate tutto il package (la directory di Quickreport) nella cartella della vostra applicazione wxPython. In sostanza, dal modulo principale della vostra gui dovrebbe essere possibile fare ``import quickreport`` senza avere errori. Questo è il modo più semplice e normale per integrare Quickreport all'interno di una vostra applicazione. 
+
+2) in alternativa, copiate il package di Quickreport in una cartella compresa nella PATH di Python, per esempio in ``.../Lib/site-packages``. Questo è utile se si vuole usare  Quickreport in diverse applicazioni wxPython. Quickreport supporta il concetto di "progetto": ogni vostra applicazione è vista da Quickreport come un diverso progetto, e quindi è possibile importare Quickreport in più applicazioni diverse. 
+
+
+2.3. La demo di Quickreport.
+----------------------------
+
+Quickreport comprende una demo che illustra le funzionalità più comuni. La gui della demo (molto spartana!) è contenuta nel file ``demo.py``, e ha bisogno del database ``chinook.sqlite`` (che è la versione sqlite del database Chinook, http://chinookdatabase.codeplex.com).  All'interno del package di Quickreport, il *progetto* che contiene il codice necessario alla demo si trova nel sub-package ``chinook_demo``. 
+
+.. note:: vi consigliamo di esplorare la demo e il suo codice: in questa documentazione si farà riferimento a molti esempi della demo. 
+
+
+2.4. Iniziare un nuovo progetto.
+-------------------------------
+
+Per iniziare a usare Quickreport dentro una vosta applicazione, dovete per prima cosa avviare un nuovo progetto. 
+
+Per fare questo, eseguite il modulo ``_make_project.py``: non dovete far altro che inserire il nome del progetto (qualunque nome che risponde ai requisiti di un identificatore per un package Python). 
+
+Lo script crea un sub-package ``<nome_progetto>`` (una nuova sub-directory, in altre parole) nel package principale di Quickreport. 
+Al suo interno, troverete tutti i moduli che vi servono, già impostati con gli import corretti e le istruzioni per l'uso:
+
+* ``params.py`` è il modulo più importante, dove impostate i nomi dei report e i parametri di input;
+* ``query.py`` accoglie le query al database per la generazione degli output
+* ``param_defaults.py`` è il posto dove organizzate il codice per i valori di default dinamici dei parametri di input
+* ``param_types.py`` raccoglie eventuali tipi di input personalizzati, da usare in aggiunta quelli standard forniti da Quickreport
+* ``param_validators.py`` vi consente di definire validatori personalizzati per i vostri report
+* ``output_types.py`` permette di definire tipi di dati personalizzati per gli output dei report
+* ``enable_menus.py`` raccoglie il codice per decidere se abilitare o no certi report, a seconda di fattori esterni (per esempio, i permessi dell'utente connesso). 
+
+Per l'uso "normale" di Quickreport, solo i primi due moduli (e probabilmente il terzo) vi serviranno davvero. Gli altri potrebbero esservi utili solo per aspetti più avanzati. 
+
+
+
+

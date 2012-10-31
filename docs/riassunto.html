@@ -1,0 +1,146 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>10. Quickreport in cinque minuti. &mdash; quickreport v0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="quickreport v0.0.1 documentation" href="index.html" />
+    <link rel="next" title="11. Feature ancora da aggiungere." href="prossimamente.html" />
+    <link rel="prev" title="9. I tipi per gli output dei report." href="tipioutput.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="prossimamente.html" title="11. Feature ancora da aggiungere."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tipioutput.html" title="9. I tipi per gli output dei report."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p># -<em>- coding: utf8 -</em>-</p>
+<div class="section" id="quickreport-in-cinque-minuti">
+<h1>10. Quickreport in cinque minuti.<a class="headerlink" href="#quickreport-in-cinque-minuti" title="Permalink to this headline">¶</a></h1>
+<p>Per concludere: che cosa dovete fare per usare Quickreport nella vostra applicazione, nel modo più semplice e indolore possibile?</p>
+<div class="section" id="il-minimo-indispensabile">
+<h2>10.1. Il minimo indispensabile.<a class="headerlink" href="#il-minimo-indispensabile" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Copiare il package di Quickreport nella directory della vostra applicazione wxPython.</li>
+<li>Creare un nuovo progetto con <tt class="docutils literal"><span class="pre">_make_project.py</span></tt>.</li>
+<li>Registrare i nomi dei report in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.REP_NAMES</span></tt>.</li>
+<li>Definire un albero di menu in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.REPORT_MENUS</span></tt>.</li>
+<li>Per ciascun report, definire i parametri in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.PARAMETERS</span></tt>.</li>
+<li>Molto probabilmente, scrivere le funzioni per determinare bounds e default dinamici in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_defaults.py</span></tt>.</li>
+<li>Per ciascun report, scrivere la query per estrarre i dati in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt>.</li>
+<li>Nel modulo della vostra gui, importare QuickReport e richiamare il menu.</li>
+</ul>
+</div>
+<div class="section" id="se-volete-complicarvi-la-vita">
+<h2>10.2. Se volete complicarvi la vita.<a class="headerlink" href="#se-volete-complicarvi-la-vita" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Potete &#8220;installare&#8221; QuickReport in una posizione &#8220;centrale&#8221;, in modo da poterlo importare contemporaneamente in più applicazioni.</li>
+<li>Potete definire più alberi di menu.</li>
+<li>Potete disabilitare certi report dal menu, in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.enable_menus.py</span></tt>.</li>
+<li>Potete scrivere validatori per i parametri, in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_validators.py</span></tt>.</li>
+<li>Potete usare molte opzioni per i parametri, per controllare catene di dipendenza, valori Null, e altro.</li>
+<li>Potete scrivere widget per parametri personalizzati, in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_types.py</span></tt>.</li>
+<li>Potete cambiare il modo in cui Quickreport renderizza i tipi di dati nei vari formati di output.</li>
+<li>Potete aggiungere nuovi tipi di output per i vari formati di output.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">10. Quickreport in cinque minuti.</a><ul>
+<li><a class="reference internal" href="#il-minimo-indispensabile">10.1. Il minimo indispensabile.</a></li>
+<li><a class="reference internal" href="#se-volete-complicarvi-la-vita">10.2. Se volete complicarvi la vita.</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tipioutput.html"
+                        title="previous chapter">9. I tipi per gli output dei report.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="prossimamente.html"
+                        title="next chapter">11. Feature ancora da aggiungere.</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/riassunto.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="prossimamente.html" title="11. Feature ancora da aggiungere."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tipioutput.html" title="9. I tipi per gli output dei report."
+             >previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Riccardo Polignieri.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

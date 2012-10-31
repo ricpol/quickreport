@@ -1,0 +1,42 @@
+# -*- coding: utf8 -*-
+
+
+7. ``params.py``: un riassunto.
+===============================
+
+Siccome ``params.py`` è la "centralina di comando" di Quickreport, è opportuno farne un riassunto, prima di procedere oltre. 
+
+
+7.1. Le variabili da impostare.
+-------------------------------
+
+* ``REP_NAMES``: un dizionario con i nomi brevi dei menu, e i nomi completi;
+* ``REPORT_MENUS``: un dizionario con gli alberi dei menu;
+* ``PARAMETERS``: un dizionario con i parametri di ciascun report. Per ciascun parametro occorre specificare: nick, label, tipo, elementi opzionali. 
+
+
+7.2. I namespace importati.
+---------------------------
+
+* ``typ.*``: i tipi "standard" dei parametri messi a disposizione da Quickreport;
+* ``p_typ.*``: i tipi "custom" dei parametri, che avete definito in ``<progetto>.param_types.py``;
+* ``dfl.*``: le funzioni standard, messe a disposizione da Quickreport, per bounds e default "dinamici";
+* ``p_dfl.*``: le funzioni "custom" per bounds e default dinamici, che avete definito in ``<progetto>.param_defaults.py``;
+* ``val.*``: i validatori standard messi a disposizione da Quickreport;
+* ``p_val.*``: validatori "custom" che avete definito in ``<progetto>.param_defaults.py``.
+
+
+7.3. Gli elementi opzionali dei parametri.
+------------------------------------------
+
+* ``validator``: per assegnare un validatore;
+* ``null``, ``null_value``: per gestire gli eventuali valori "Null";
+* ``default``, ``bounds``: bounds e default "statici" per il parametro;
+* ``func_default``, ``func_bounds``, ``default_bounds``: bounds e default "dinamici" per il parametro;
+* ``args_default``, ``args_bounds``, ``args_default_bounds``: argomenti opzionali per bounds e default "dinamici";
+* ``dep_default``, ``dep_bounds``, ``dependencies``: liste di altri parametri, il cui valore e' passato come argomento opzionale alle funzioni per bounds e default "dinamici";
+* ``dependency_if_null``: per gestire l'eventuale valore "Null" al momento di passare il valore come "dependency";
+* ``recalc``: una lista di altri parametri che devono essere ricalcolati quando il valore di questo parametro cambia;
+* ``recalc_on_null``: per decidere se attivare il ricalcolo anche quando cambia lo stato di "Null".
+
+

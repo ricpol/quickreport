@@ -1,0 +1,16 @@
+# -*- coding: utf8 -*-
+
+11. Feature ancora da aggiungere.
+=================================
+
+Per finire, ecco un elenco di feature che mi piacerebbe aggiungere nelle prossime versioni di Quickreport:
+
+* La possibilità di inserire, dentro i menu di Quickreport, delle voci gestite direttamente dall'applicazione e non da Quickreport. Questo potrebbe tornare utile quando, per esempio, ci sono dei report che non volete far gestire a Quickreport, ma vi dispiace creare un menu separato. 
+
+* La possibilità di importare tipi, validatori, etc. definiti in altri progetti. Questo potrebbe portare alla creazione di librerie di elementi utili, da usare in più progetti.
+
+* La possibilità di abilitare e disabilitare le voci dei menu a runtime (adesso il controllo avviene solo all'inizio). 
+
+* Widget dei parametri personalizzabili, usando argomenti opzionali. Per esempio, caselle di testo che accettano un massimo di caratteri, etc.
+
+* Nuovi widget dei parametri, nuovi tipi di output, nuovi formati di output (pdf!!), etc. etc. 

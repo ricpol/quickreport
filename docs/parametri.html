@@ -1,0 +1,169 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5. Definire i parametri di input. &mdash; quickreport v0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="quickreport v0.0.1 documentation" href="index.html" />
+    <link rel="next" title="6. Gli elementi opzionali dei parametri." href="opzioniparametri.html" />
+    <link rel="prev" title="4. I primi passi: organizzare i menu dei report." href="nomireport.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="opzioniparametri.html" title="6. Gli elementi opzionali dei parametri."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nomireport.html" title="4. I primi passi: organizzare i menu dei report."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p># -<em>- coding: utf8 -</em>-</p>
+<div class="section" id="definire-i-parametri-di-input">
+<h1>5. Definire i parametri di input.<a class="headerlink" href="#definire-i-parametri-di-input" title="Permalink to this headline">¶</a></h1>
+<p>I parametri di input sono valori che occorre chiedere all&#8217;utente per specificare meglio le caratteristiche del report da generare: il cliente di cui si desidera vedere gli acquisti, i mesi per cui si devono mostrare le vendite, e così via.</p>
+<p>Quickreport permette di definire e organizzare con facilità questi parametri.</p>
+<div class="section" id="parameters-l-elenco-dei-parametri">
+<h2>5.1. PARAMETERS: l&#8217;elenco dei parametri.<a class="headerlink" href="#parameters-l-elenco-dei-parametri" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.PARAMETERS</span></tt> è la parte di Quickreport su cui probabilmente lavorerete di più. E&#8217; un dizionario che deve avere, come chiavi, i nick dei vari report che avete definito sopra. Per ciascun report, dovete elencare i vari parametri in una tupla.</p>
+<p>Ancora una volta, un&#8217;occhiata alla demo vi chiarirà la struttura di <tt class="docutils literal"><span class="pre">PARAMETERS</span></tt> meglio di mille parole.</p>
+<p>Ciascun parametro, a sua volta, è una tupla con esattamente quattro elementi:</p>
+<ul class="simple">
+<li>un nick corto che userete per identificare il parametro</li>
+<li>una descrizione più lunga che comparirà nella gui</li>
+<li>il tipo del parametro (cfr. sotto)</li>
+<li>un dizionario che può contenere ulteriori elementi ozionali (vedi sotto). Se non avete bisogno di alcun elemento opzionale, lasciate ugualmente un dizionario vuoto.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">alcuni report potrebbero non aver bisogno di parametri. In questo caso, basterà non includere il report in <tt class="docutils literal"><span class="pre">PARAMETERS</span></tt>. Per esempio, nella demo il report &#8220;List of Genres&#8221; non ha parametri.</p>
+</div>
+</div>
+<div class="section" id="i-tipi-dei-parametri">
+<h2>5.2. I tipi dei parametri.<a class="headerlink" href="#i-tipi-dei-parametri" title="Permalink to this headline">¶</a></h2>
+<p>I tipi dei parametri sono in pratica dei widget wxPython adatti ad accogliere un certo tipo di dato, che l&#8217;utente inserisce come parametro di input. Per esempio, per una stringa di ricerca da inserire potete usare un tipo &#8220;text&#8221;, che restituisce un widget basato su un <tt class="docutils literal"><span class="pre">wx.TextCtrl</span></tt>; per una lista di opzioni tra cui scegliere potete usare il tipo &#8220;list&#8221;, e così via.</p>
+<p>Tutti i tipi sono disponibili nel namespace <tt class="docutils literal"><span class="pre">typ.*</span></tt>. Inoltre, è possibile definire tipi personalizzati a livello di progetto (questo è un argomento avanzato che tratteremo nel paragrafo seguente), che saranno disponibili nel namespace <tt class="docutils literal"><span class="pre">p_typ.*</span></tt></p>
+<p>I tipi attualmente diponibili sono:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">typ.text</span></tt>: un tipo per l&#8217;inserimento di testo</li>
+<li><tt class="docutils literal"><span class="pre">typ.integer</span></tt>: un tipo per l&#8217;inserimento di numeri interi</li>
+<li><tt class="docutils literal"><span class="pre">typ.boolean</span></tt>: per l&#8217;inserimento di valori Vero/Falso</li>
+<li><tt class="docutils literal"><span class="pre">typ.symple_list</span></tt>: presenta una lista di valori tra cui scegliere</li>
+<li><tt class="docutils literal"><span class="pre">typ.id_list</span></tt>: come il precedente, ma ha due colonne: la prima, nascosta, mantiene gli id univoci, mentre la seconda è quella che l&#8217;utente vede. <tt class="docutils literal"><span class="pre">GetValue</span></tt> e <tt class="docutils literal"><span class="pre">GetValue</span></tt> fanno riferimento agli id.</li>
+<li><tt class="docutils literal"><span class="pre">typ.droplist</span></tt>: presenta una lista di valori tra cui scegliere (versione combobox)</li>
+<li><tt class="docutils literal"><span class="pre">typ.id_droplist</span></tt>: come il precedente, ma ha due colonne</li>
+<li><tt class="docutils literal"><span class="pre">typ.date</span></tt>: un tipo per l&#8217;inserimento di date</li>
+<li><tt class="docutils literal"><span class="pre">typ.period</span></tt>: permette di scegliere un periodo temporale compreso tra una data di inizio e una data di fine</li>
+<li><tt class="docutils literal"><span class="pre">typ.month</span></tt>, <tt class="docutils literal"><span class="pre">typ.bimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.trimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.quadrimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.semester</span></tt>: dividono l&#8217;anno in periodi fissi (per es., &#8220;terzo quadrimestre del 2010&#8221;, etc.)</li>
+</ul>
+</div>
+<div class="section" id="aggiungere-nuovi-tipi-di-parametro">
+<h2>5.3. Aggiungere nuovi tipi di parametro.<a class="headerlink" href="#aggiungere-nuovi-tipi-di-parametro" title="Permalink to this headline">¶</a></h2>
+<p>Aggiungere nuovi tipi di parametro a quelli predefiniti è possibile, ma richiede qualche abilità di programmazione wxPython.</p>
+<p>Il luogo giusto per definire nuovi tipi di parametro è il modulo <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_types.py</span></tt>. I tipi definiti qui saranno visibili da <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.py</span></tt> nel namespace <tt class="docutils literal"><span class="pre">p_typ.*</span></tt> (per distinguerli dai tipi &#8220;di default&#8221;, che sono raggruppati nel namespace <tt class="docutils literal"><span class="pre">typ.*</span></tt>).</p>
+<p>Essenzialmente, un tipo di parametro non è altro che un widget personalizzato di wxPython, al quale Quickreport richiede una certa API. Di conseguenza, il modo tipico di procedere è derivare da una classe wxPython esistente, modificare dove occorre, e garantire i metodi che servono a Quickreport. Potete dare un&#8217;occhiata ai tipi predefiniti (nel modulo <tt class="docutils literal"><span class="pre">param_tpes.py</span></tt>) per prendere spunto.</p>
+<p>L&#8217;API necessaria per Quickreport è la seguente:</p>
+<ul class="simple">
+<li>un metodo <tt class="docutils literal"><span class="pre">GetValue</span></tt>, usato per raccogliere il valore del parametro al momento di passarlo al database.</li>
+<li>un metodo <tt class="docutils literal"><span class="pre">SetValue</span></tt>, usato per settare il valore di default.</li>
+<li>un metodo <tt class="docutils literal"><span class="pre">SetBounds</span></tt>, usato per settare i bounds del parametro. Per bounds e default, cfr. il capitolo seguente.</li>
+<li>infine il widget deve notificare l&#8217;avvenuto cambiamento del suo valore chiamando la funzione <tt class="docutils literal"><span class="pre">post_evt_param_changed</span></tt> (già importata nel modulo).</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5. Definire i parametri di input.</a><ul>
+<li><a class="reference internal" href="#parameters-l-elenco-dei-parametri">5.1. PARAMETERS: l&#8217;elenco dei parametri.</a></li>
+<li><a class="reference internal" href="#i-tipi-dei-parametri">5.2. I tipi dei parametri.</a></li>
+<li><a class="reference internal" href="#aggiungere-nuovi-tipi-di-parametro">5.3. Aggiungere nuovi tipi di parametro.</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nomireport.html"
+                        title="previous chapter">4. I primi passi: organizzare i menu dei report.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="opzioniparametri.html"
+                        title="next chapter">6. Gli elementi opzionali dei parametri.</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/parametri.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="opzioniparametri.html" title="6. Gli elementi opzionali dei parametri."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nomireport.html" title="4. I primi passi: organizzare i menu dei report."
+             >previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Riccardo Polignieri.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

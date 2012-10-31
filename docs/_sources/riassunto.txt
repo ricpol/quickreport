@@ -1,0 +1,49 @@
+# -*- coding: utf8 -*-
+
+10. Quickreport in cinque minuti.
+=================================
+
+Per concludere: che cosa dovete fare per usare Quickreport nella vostra applicazione, nel modo più semplice e indolore possibile?
+
+
+10.1. Il minimo indispensabile.
+-------------------------------
+
+* Copiare il package di Quickreport nella directory della vostra applicazione wxPython. 
+
+* Creare un nuovo progetto con ``_make_project.py``.
+
+* Registrare i nomi dei report in ``<progetto>.params.REP_NAMES``.
+
+* Definire un albero di menu in ``<progetto>.params.REPORT_MENUS``.
+
+* Per ciascun report, definire i parametri in ``<progetto>.params.PARAMETERS``.
+
+* Molto probabilmente, scrivere le funzioni per determinare bounds e default dinamici in ``<progetto>.param_defaults.py``.
+
+* Per ciascun report, scrivere la query per estrarre i dati in ``<progetto>.query.py``.
+
+* Nel modulo della vostra gui, importare QuickReport e richiamare il menu. 
+
+
+10.2. Se volete complicarvi la vita.
+------------------------------------
+
+* Potete "installare" QuickReport in una posizione "centrale", in modo da poterlo importare contemporaneamente in più applicazioni.
+
+* Potete definire più alberi di menu.
+
+* Potete disabilitare certi report dal menu, in ``<progetto>.enable_menus.py``.
+
+* Potete scrivere validatori per i parametri, in ``<progetto>.param_validators.py``.
+
+* Potete usare molte opzioni per i parametri, per controllare catene di dipendenza, valori Null, e altro.
+
+* Potete scrivere widget per parametri personalizzati, in ``<progetto>.param_types.py``.
+
+* Potete cambiare il modo in cui Quickreport renderizza i tipi di dati nei vari formati di output.
+
+* Potete aggiungere nuovi tipi di output per i vari formati di output. 
+
+
+

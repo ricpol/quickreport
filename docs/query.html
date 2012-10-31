@@ -1,0 +1,184 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>8. Le query al database per la generazione dei report. &mdash; quickreport v0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="quickreport v0.0.1 documentation" href="index.html" />
+    <link rel="next" title="9. I tipi per gli output dei report." href="tipioutput.html" />
+    <link rel="prev" title="7. params.py: un riassunto." href="riassuntoparams.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tipioutput.html" title="9. I tipi per gli output dei report."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="riassuntoparams.html" title="7. params.py: un riassunto."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p># -<em>- coding: utf8 -</em>-</p>
+<div class="section" id="le-query-al-database-per-la-generazione-dei-report">
+<h1>8. Le query al database per la generazione dei report.<a class="headerlink" href="#le-query-al-database-per-la-generazione-dei-report" title="Permalink to this headline">¶</a></h1>
+<p>Finora abbiamo esaminato la parte di &#8220;input&#8221; di Quickreport: come organizzare i report in alberi di menu, e come presentare all&#8217;utente i parametri necessari a generare il report.</p>
+<p>Quando l&#8217;utente, dopo aver impostato i valori dei parametri, fa clic sul pulsante &#8220;report&#8221;, Quickreport raccoglie tutti i valori dei parametri e li passa a una funzione che si incarica di elaborarli e interrogare il database per estrarre i dati.</p>
+<p>Questo è il momento in cui Quickreport fa un passo indietro, e vi lascia gestire questa fase come meglio credete. Quickreport preferisce non fare assunzioni sul tipo di database che avete, se usate un ORM o un layer intermedio, oppure se preferite fare &#8220;a mano&#8221;, etc. Potete collegare facilmente a Quickreport qualsiasi meccanismo di connessione al database che abbiate ideato per la vostra applicazione.</p>
+<p>Tutto ciò che Quickreport si aspetta da voi è che, una volta estratti i dati, li restituiate rispettando un&#8217;API davvero minimale, che esaminiamo in questo capitolo.</p>
+<div class="section" id="quickreportsettings-db-un-approfondimento">
+<h2>8.1. <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt>: un approfondimento.<a class="headerlink" href="#quickreportsettings-db-un-approfondimento" title="Permalink to this headline">¶</a></h2>
+<p>Abbiamo visto che <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> è la variabile globale che comunica a QuickReport dove può trovare una connessione al database.</p>
+<p>Nei capitoli precedenti, per semplicità, abbiamo trattato <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> come se fosse una impostazione <em>necessaria</em> di Quickreport, ma in realtà non è affatto così. Infatti, Quickreport non usa mai, internamente, questa variabile.</p>
+<p>Ricapitoliamo tutti i punti in cui <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> può comparire:</p>
+<ul class="simple">
+<li>in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.enable_menus.py</span></tt>: eventualmente potreste aver bisogno di interrogare il database per decidere se una voce di menu deve esssere abilitata oppure no (nella demo, per esempio, questo succede);</li>
+<li>in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_defaults.py</span></tt>: molto probabilmente avrete bisogno del database per decidere bounds e default &#8220;dinamici&#8221; dei paramentri;</li>
+<li>in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt>: è il modulo di cui ci occupiamo in questo capitolo, ed è il punto in cui estraete i dati dal database per generare il report.</li>
+</ul>
+<p>Ovviamente, <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> potrebbe comparire in qualunque altro modulo del vostro progetto, se decidete di fare delle personalizzazioni particolarmente esotiche.</p>
+<p>Ma in sostanza, <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> può essere usato solo nelle parti di codice che scrivete voi stessi. Di conseguenza, potete impostarlo come preferite, o addirittura non usarlo, e rimpiazzarlo con qualcos&#8217;altro.</p>
+<p>Le API di Quickreport sono indifferenti al modo in cui vi collegate al database: per esempio, le funzioni di <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.enable_menus.py</span></tt> devono restituire sempre <tt class="xref docutils literal"><span class="pre">True</span></tt> o <tt class="xref docutils literal"><span class="pre">False</span></tt>, e le funzioni di <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_defaults.py</span></tt> devono restituire valori singoli (per i default) o tuple di valori (per i bounds). Non importa con quali mezzi le funzioni che definite in quei moduli ottengono questi risultati.</p>
+<p>Fatta questa precisazione importante, nel seguito di questo capitolo continueremo a riferirci a <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> come viene usato nella demo: un oggetto di connessione a un database sqlite. Nella demo e in questa documentazione, per mantenere le cose semplici, non useremo Sqlalchemy o altri strumenti avanzati, e semplicemente costruiremo query &#8220;a mano&#8221; da sottoporre alla connessione <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt>.</p>
+</div>
+<div class="section" id="l-api-di-progetto-query-py">
+<h2>8.2. L&#8217;API di <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt>.<a class="headerlink" href="#l-api-di-progetto-query-py" title="Permalink to this headline">¶</a></h2>
+<p>Nel modulo <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt> dovete definire delle funzioni che, per ciascun report, interrogano il database e restituiscono i dati.</p>
+<p>Per ciascun report, dovete definire una funzione: naturalmente potete scrivere anche qualsiasi funzione helper che desiderate, o fattorizzare il vostro codice come preferite. L&#8217;importante però è che, alla fine, a ciascun report corrisponda una funzione che Quickreport chiamerà automaticamente al momento opportuno.</p>
+<p>Perché Quickreport sappia quale funzione chiamare, dovete registrarla nel dizionario <tt class="docutils literal"><span class="pre">DISPATCH_TABLE</span></tt>, secondo questa logica:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DISPATCH_TABLE</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;nick_del_report&#39;</span> <span class="p">:</span> <span class="n">funzione</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>La funzione registrata deve rispettare una API ben precisa:</p>
+<ul class="simple">
+<li>deve accettare come unico argomento un dizionario (nella demo lo abbiamo chiamato sempre <tt class="docutils literal"><span class="pre">params</span></tt>, ma il nome è lasciato a voi, chiaramente). Quickreport riempirà automaticamente questo dizionario con i valori raccolti per i vari parametri, secondo la logica <tt class="docutils literal"><span class="pre">{</span> <span class="pre">'nick_parametro'</span> <span class="pre">:</span> <span class="pre">valore</span> <span class="pre">}</span></tt>. Quindi, se il vostro report prevede i parametri <tt class="docutils literal"><span class="pre">'data'</span></tt> e <tt class="docutils literal"><span class="pre">'stato'</span></tt>, all&#8217;interno della funzione li potete recuperare come <tt class="docutils literal"><span class="pre">params['data']</span></tt> e <tt class="docutils literal"><span class="pre">params['stato']</span></tt> rispettivamente.</li>
+<li>la funzione deve essere un <em>generatore</em>;</li>
+<li>deve sempre yield-are per prima cosa una lista di stringhe: le <strong>intestazioni</strong> delle colonne del report;</li>
+<li>subito dopo deve yield-are una seconda lista di stringhe, con lo stesso numero di elementi: i <strong>tipi</strong> di dato per ciascuna colonna. I tipi di dato disponibili sono esaminati nel dettaglio nel capitolo seguente;</li>
+<li>solo a questo punto, se non ci sono dati, deve sollevare <tt class="docutils literal"><span class="pre">StopIteration</span></tt>;</li>
+<li>in caso contrario, deve yield-are una riga di dati alla volta (una normale tupla di valori);</li>
+<li>infine, deve sollevare <tt class="docutils literal"><span class="pre">StopIteration</span></tt> quando non ci sono più dati.</li>
+</ul>
+</div>
+<div class="section" id="la-funzione-helper-sql-exec">
+<h2>8.3. La funzione helper <tt class="docutils literal"><span class="pre">_sql_exec</span></tt>.<a class="headerlink" href="#la-funzione-helper-sql-exec" title="Permalink to this headline">¶</a></h2>
+<p>Per semplificare ulteriormente questa API, Quickreport mette a disposizione una piccola funzione helper <tt class="docutils literal"><span class="pre">_sql_exec</span></tt>. Quando create un nuovo progetto, questa funzione è trascritta al fondo del modulo <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt>, quindi ne troverete una copia per ciascun nuovo progetto. Sentitevi liberi di modificarla, o anche semplicemente di non usarla.</p>
+<p><tt class="docutils literal"><span class="pre">_sql_exec</span></tt> è un generatore che interroga il database, e produce le intestazioni delle colonne, i tipi dei dati e le righe dei dati, rispettando l&#8217;API necessaria.</p>
+<p>Se decidete di usarla, tutto ciò che vi resta da fare all&#8217;interno della vostra funzione è:</p>
+<ul>
+<li><p class="first">definire la lista delle <strong>intestazioni</strong>;</p>
+</li>
+<li><p class="first">definire la lista dei <strong>tipi</strong>;</p>
+</li>
+<li><p class="first">comporre una <strong>stringa sql</strong>;</p>
+</li>
+<li><p class="first">comporre una tupla di <strong>parametri</strong> per la stringa sql;</p>
+</li>
+<li><p class="first">terminare la vostra funzione con:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">return</span> <span class="n">_sql_exec</span><span class="p">(</span><span class="n">intestazioni</span><span class="p">,</span> <span class="n">tipi</span><span class="p">,</span> <span class="n">stringa_sql</span><span class="p">,</span> <span class="n">parametri</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Naturalmente <tt class="docutils literal"><span class="pre">_sql_exec</span></tt> utilizza <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt> per interrogare il database! Va da sé che, se state utilizzando un metodo differente per accedere al database, dovete modificare <tt class="docutils literal"><span class="pre">_sql_exec</span></tt> oppure non utilizzarla (in questo caso, potete anche cancellarla).</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">La demo, naturalmente, contiene una funzione per ciascun report, e tutte usano _sql_exec.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">8. Le query al database per la generazione dei report.</a><ul>
+<li><a class="reference internal" href="#quickreportsettings-db-un-approfondimento">8.1. <tt class="docutils literal"><span class="pre">QuickReportSettings.db</span></tt>: un approfondimento.</a></li>
+<li><a class="reference internal" href="#l-api-di-progetto-query-py">8.2. L&#8217;API di <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.query.py</span></tt>.</a></li>
+<li><a class="reference internal" href="#la-funzione-helper-sql-exec">8.3. La funzione helper <tt class="docutils literal"><span class="pre">_sql_exec</span></tt>.</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="riassuntoparams.html"
+                        title="previous chapter">7. <tt class="docutils literal docutils literal"><span class="pre">params.py</span></tt>: un riassunto.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="tipioutput.html"
+                        title="next chapter">9. I tipi per gli output dei report.</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/query.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tipioutput.html" title="9. I tipi per gli output dei report."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="riassuntoparams.html" title="7. params.py: un riassunto."
+             >previous</a> |</li>
+        <li><a href="index.html">quickreport v0.0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Riccardo Polignieri.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
