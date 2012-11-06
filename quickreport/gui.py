@@ -77,7 +77,8 @@ class ParametersPanel(scrolled.ScrolledPanel):
         s = wx.BoxSizer(wx.VERTICAL)
         parameters = PARAMETERS.get(report_name, [])
         for param, label, input_type, options in parameters:
-            self.param_widgets[param] = input_type(self)
+            type_options = options.pop('type_options', {})
+            self.param_widgets[param] = input_type(self, **type_options)
             self.param_widgets[param].SetName(param)
             self.param_widgets[param].Bind(EVT_PARAM_CHANGED, self.on_param_changed)
             self.param_options[param] = options

@@ -18,7 +18,7 @@ import datetime
 from gui_utils import post_evt_param_changed, EVT_PARAM_CHANGED
 
 __all__ = ['text', 'integer', 'boolean', 
-           'symple_list', 'id_list', 'droplist', 'id_droplist', 
+           'symple_list', 'droplist', 
            'date', 'period', 
            'month', 'bimester', 'trimester', 'quadrimester', 'semester']
 
@@ -70,11 +70,7 @@ class SimpleListWidget(wx.ListBox):
     SetBounds = wx.ListBox.SetItems
     GetValue = wx.ListBox.GetStringSelection
     SetValue = wx.ListBox.SetStringSelection
-    
-def symple_list(parent): return SimpleListWidget(parent)
 
-
-# 'id_list' type input parameter ===============================================
 class TwoFieldsListWidget(wx.ListBox):
     def __init__(self, *a, **k):
         wx.ListBox.__init__(self, *a, **k)
@@ -94,7 +90,9 @@ class TwoFieldsListWidget(wx.ListBox):
     def GetValue(self):
         return self.ids[self.GetSelection()]
 
-def id_list(parent): return TwoFieldsListWidget(parent)
+def symple_list(parent, use_id=False): 
+    if use_id: return TwoFieldsListWidget(parent)
+    else: return SimpleListWidget(parent)
 
 
 # 'droplist' type input parameter ==============================================
@@ -106,10 +104,6 @@ class DropDownListWidget(wx.ComboBox):
     
     SetBounds = wx.ComboBox.SetItems
     
-def droplist(parent): return DropDownListWidget(parent)
-
-
-# 'id_droplist' type input parameter ===========================================
 class TwoFieldsDropDownWidget(wx.ComboBox):
     def __init__(self, *a, **k):
         k['style'] = wx.CB_DROPDOWN|wx.CB_READONLY
@@ -133,7 +127,9 @@ class TwoFieldsDropDownWidget(wx.ComboBox):
     def GetValue(self):
         return self.ids[self.GetSelection()]
 
-def id_droplist(parent): return TwoFieldsDropDownWidget(parent)
+def droplist(parent, use_id=False): 
+    if use_id: return TwoFieldsDropDownWidget(parent)
+    else: return DropDownListWidget(parent)
 
 
 # 'date' type input parameter ==================================================
