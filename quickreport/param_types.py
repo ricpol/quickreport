@@ -118,7 +118,7 @@ class TwoFieldsListWidget(wx.ListBox):
 
 class MultiChoiceListWidget(wx.CheckListBox):
     def __init__(self, *a, **k):
-        self.use_id = k.pop['use_id']
+        self.use_id = k.pop('use_id')
         wx.CheckListBox.__init__(self, *a, **k)
         if self.use_id:
             self.ids = []
@@ -152,7 +152,7 @@ class MultiChoiceListWidget(wx.CheckListBox):
             return self.GetStringSelection()
         
 def symple_list(parent, use_id=False, multichoice=False): 
-    if multichoice and (wx.PlatformInformation().GetPortIdName() in ('wxMSW', 'wxGTK')):
+    if multichoice and wx.PlatformInfo[1] in ('wxMSW', 'wxGTK'):
         return MultiChoiceListWidget(parent, use_id=use_id)
     if use_id:
         return TwoFieldsListWidget(parent, multichoice=multichoice)
@@ -198,21 +198,21 @@ def droplist(parent, use_id=False):
 
 
 # 'currency' type input parameter ==============================================
-EURO_CONVENTIONS = {  # note: actually, conventions for euro used in _Italy_!
+EURO_CONVENTIONS = {  # note: actually, conventions for euro adopted in _Italy_!
     'mon_decimal_point': ',', 'int_frac_digits': 2, 'p_sep_by_space': 1, 
     'frac_digits': 2, 'thousands_sep': '.', 'n_sign_posn': 3, 'decimal_point': ',', 
     'int_curr_symbol': 'EUR', 'n_cs_precedes': 1, 'p_sign_posn': 3, 
     'mon_thousands_sep': '.', 'negative_sign': '-', 'currency_symbol': '\x80', 
     'n_sep_by_space': 1, 'mon_grouping': [3, 0], 'p_cs_precedes': 1, 
     'positive_sign': '', 'grouping': [3, 0]}
-DOLLAR_CONVENTIONS = { # conventions for usd used in USA
+DOLLAR_CONVENTIONS = { # conventions for usd adopted in USA
     'mon_decimal_point': '.', 'int_frac_digits': 2, 'p_sep_by_space': 0, 
     'frac_digits': 2, 'thousands_sep': ',', 'n_sign_posn': 0, 'decimal_point': '.', 
     'int_curr_symbol': 'USD', 'n_cs_precedes': 1, 'p_sign_posn': 3, 
     'mon_thousands_sep': ',', 'negative_sign': '-', 'currency_symbol': '$', 
     'n_sep_by_space': 0, 'mon_grouping': [3, 0], 'p_cs_precedes': 1, 
     'positive_sign': '', 'grouping': [3, 0]}
-POUND_CONVENTIONS: {  # conventions for pounds used in GB
+POUND_CONVENTIONS = {  # conventions for pounds adopted in GB
     'mon_decimal_point': '.', 'int_frac_digits': 2, 'p_sep_by_space': 0, 
     'frac_digits': 2, 'thousands_sep': ',', 'n_sign_posn': 3, 'decimal_point': '.', 
     'int_curr_symbol': 'GBP', 'n_cs_precedes': 1, 'p_sign_posn': 3, 
@@ -220,21 +220,21 @@ POUND_CONVENTIONS: {  # conventions for pounds used in GB
     'n_sep_by_space': 0, 'mon_grouping': [3, 0], 'p_cs_precedes': 1, 
     'positive_sign': '', 'grouping': [3, 0]}
 
-class CurrencyWidget(wxPanel):
+class CurrencyWidget(wx.Panel):
     def __init__(self, *a, **k):
-        use_decimal = k.pop['use_decimal']
-        conv = k.pop['conventions']
-        if conv == 'euro':     conv = EURO_CONVENTIONS
+        use_decimal = k.pop('use_decimal')
+        conv = k.pop('conventions')
+        if conv == 'euro'    : conv = EURO_CONVENTIONS
         elif conv == 'dollar': conv = DOLLAR_CONVENTIONS
-        elif conv == 'pound':  conv = POUND_CONVENTIONS
+        elif conv == 'pound' : conv = POUND_CONVENTIONS
         wx.Panel.__init__(self, *a, **k)
         
         self.currency = masked.NumCtrl(self, limited=True,
-            fractionWidth        = (conv['frac_digits'] if use_decimal else 0),
-            groupDigits          = (conv['mon_grouping'][0]>0),
-            groupChar            = conv['thousands_sep'],
-            decimalChar          = conv['decimal_point'],
-            useParensForNegative = (conv['n_sign_posn']==0))
+            fractionWidth         = (conv['frac_digits'] if use_decimal else 0),
+            groupDigits           = (conv['mon_grouping'][0]>0),
+            groupChar             = conv['thousands_sep'],
+            decimalChar           = conv['decimal_point'],
+            useParensForNegatives = (conv['n_sign_posn']==0))
         self.currency.Bind(masked.EVT_NUM, post_evt_param_changed)
                            
         s = wx.BoxSizer()
