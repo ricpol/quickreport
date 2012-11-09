@@ -20,6 +20,7 @@ _m = import_module('quickreport.'+current_project+'.params')
 PARAMETERS = _m.PARAMETERS
 REPORT_MENUS = _m.REPORT_MENUS
 REP_NAMES = _m.REP_NAMES
+REPORT_MENU_LABELS = _m.REPORT_MENU_LABELS
 
 _m = import_module('quickreport.'+current_project+'.enable_menus')
 enable_menu  = _m.enable_menu
@@ -31,20 +32,19 @@ from gui_utils import EVT_PARAM_CHANGED
 from output import generate_output, get_available_outputs
 
 
-def make_menu(items, parent, callback):
+def make_menu(menu_name, items, parent, callback):
     menu = wx.Menu()
     for item in items:
         if isinstance(item, tuple):
-            menu.AppendMenu(-1, item[0], make_menu(item[1], parent, callback))
+            menu.AppendMenu(-1, item[0], make_menu(menu_name, item[1], parent, callback))
         else:
             if not item:
                 menu.AppendSeparator()
                 continue
-            menuItem = menu.Append(-1, item)
-            item = item.split('\t')[0].replace('&', '')
+            menuItem = menu.Append(-1, REPORT_MENU_LABELS[menu_name][item])
             menuItem.Enable(enable_menu(item))
             parent.Bind(wx.EVT_MENU, 
-                        lambda evt, parent=parent, item=REP_NAMES[item]: callback(parent, item),
+                        lambda evt, parent=parent, item=item: callback(parent, item),
                         menuItem)
     return menu
 
@@ -54,8 +54,8 @@ def report_dispatcher(parent, label):
     ParametersDialog(parent, report=label).ShowModal()
     
 
-def make_menu_report(parent, menu='main_menu'):
-        return make_menu(REPORT_MENUS[menu], parent, report_dispatcher)
+def make_menu_report(parent, menu_name='main_menu'):
+        return make_menu(menu_name, REPORT_MENUS[menu_name], parent, report_dispatcher)
 
 
 

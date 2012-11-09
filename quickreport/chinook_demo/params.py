@@ -72,19 +72,17 @@ from datetime import datetime as dt
 
 
 # ==============================================================================
-# Inserire qui i nomi dei report {nome_lungo : nick}
+# Inserire qui i nomi dei report {nick : nome_per_finestra_param}
 
 REP_NAMES = {
-    'Album by artist'        : 'album_artist', 
-    'Albums and tracks'      : 'tracks', 
-    'List of genres'         : 'genres', 
-    'Employees list'         : 'employees',
-    'Invoices by period'     : 'invoices_period', 
-    'Invoices by trimester'  : 'invoices_trimester', 
-    'Invoices by country'    : 'invoices_by_contry', 
+    'album_artist'       : 'Album by artist', 
+    'tracks'             : 'Albums and tracks',
+    'genres'             : 'List of genres',
+    'employees'          : 'Employees list',
+    'invoices_period'    : 'Invoices by period', 
+    'invoices_trimester' : 'Invoices by trimester',
+    'invoices_by_contry' : 'Invoices by country',
              }
-REP_NAMES.update({v:k for k, v in REP_NAMES.iteritems()})
-
 
 
 # ==============================================================================
@@ -94,22 +92,22 @@ REPORT_MENUS = {
     'main_menu' : 
             (
                 ('Some reports', 
-                    ('Album by &artist\tCtrl+1', 
-                     'Albums and &tracks\tCtrl+2')
+                    ('album_artist', 
+                     'tracks')
                 ),
                 ('Another report', 
-                    ('List of &genres\tCtrl+3',)
+                    ('genres',)
                 ),  
-                'Employees &list\tCtrl+4',
+                'employees',
                 '',   # <- this is a separator!
                 ('Even more reports', 
                     (
                         ('two more', 
-                            ('Invoices by &period\tCtrl+5', 
-                             'Invoices by &trimester\tCtrl+6')
+                            ('invoices_period', 
+                             'invoices_trimester')
                         ),
                         ('one more',
-                            ('Invoices by &country\tCtrl+7',)
+                            ('invoices_by_contry',)
                         )
                     )
                 ),
@@ -117,13 +115,29 @@ REPORT_MENUS = {
 
     'context_menu' : 
             (
-                'Album by Artist', 
-                'Albums and Tracks',
-                'List of Genres',
+                'album_artist', 
+                'tracks',
+                'genres',
             ),
 
 }
 
+# definire qui, per ciascun menu e per ciascun report elencato nel menu, 
+# le label dei report (con le eventuali scorciatoie). 
+# Occorre almeno definire 'main_menu'
+REPORT_MENU_LABELS = {
+    'main_menu' : {'album_artist'       : 'Album by &artist\tCtrl+1',  
+                   'tracks'             : 'Albums and &tracks\tCtrl+2', 
+                   'genres'             : 'List of &genres\tCtrl+3', 
+                   'employees'          : 'Employees &list\tCtrl+4', 
+                   'invoices_period'    : 'Invoices by &period\tCtrl+5',  
+                   'invoices_trimester' : 'Invoices by &trimester\tCtrl+6', 
+                   'invoices_by_contry' : 'Invoices by &country\tCtrl+7'},
+                   
+    'context_menu': {'album_artist' : 'Album by artist', 
+                     'tracks'       : 'Albums and tracks',
+                     'genres'       : 'List of genres'}
+}
 
 # ==============================================================================
 # elencare qui i parametri necessari per i report, nella forma:
