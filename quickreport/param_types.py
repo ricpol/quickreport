@@ -77,22 +77,46 @@ def boolean(parent): return BooleanWidget(parent)
 class SimpleListWidget(wx.ListBox):
     def __init__(self, *a, **k):
         self.multichoice = k.pop('multichoice')
+        self.select_all = k.pop('select_all', '')
         if self.multichoice:
             k['style'] = wx.LB_EXTENDED
+        else:
+            self.select_all = '' # just in case of user's mistake
         wx.ListBox.__init__(self, *a, **k)
-        self.Bind(wx.EVT_LISTBOX, post_evt_param_changed)
+        funct = self.on_select if self.select_all else post_evt_param_changed
+        self.Bind(wx.EVT_LISTBOX, funct)
+        self._all_selected = False
+    
+    def on_select(self, evt): # used only in case of self.select_all
+        if evt.GetSelection() == 0:
+            for i in self.GetItems():
+                self.SetStringSelection(i, (not self._all_selected))
+            self._all_selected = not self._all_selected
+        post_evt_param_changed(evt)
         
-    SetBounds = wx.ListBox.SetItems
+    def SetBounds(self, bounds):
+        if self.select_all: 
+            bounds = [self.select_all] + list(bounds)
+        self.SetItems(bounds)
     
     def SetValue(self, val):
+        if val is None: 
+            self.SetSelection(-1)
+            return
         if self.multichoice:
-            for v in val:
-                self.SetStringSelection(v)
+            strings = self.GetStrings()
+            if val == 'all':
+                val = strings
+            elif val == 'none':
+                val = []
+            for v in strings:
+                self.SetStringSelection(v, (v in val))
         else:
             self.SetStringSelection(val)
             
     def GetValue(self):
         if self.multichoice:
+            if self.select_all: self.SetSelection(0, False)
             return [self.GetString(i) for i in self.GetSelections()]
         else:
             return self.GetStringSelection()
@@ -100,28 +124,47 @@ class SimpleListWidget(wx.ListBox):
 class TwoFieldsListWidget(wx.ListBox):
     def __init__(self, *a, **k):
         self.multichoice = k.pop('multichoice')
+        self.select_all = k.pop('select_all', '')
         if self.multichoice:
             k['style'] = wx.LB_EXTENDED
+        else:
+            self.select_all = '' # just in case of user's mistake
         wx.ListBox.__init__(self, *a, **k)
         self.ids = []
-        self.Bind(wx.EVT_LISTBOX, post_evt_param_changed)
+        self._all_selected = False
+        funct = self.on_select if self.select_all else post_evt_param_changed
+        self.Bind(wx.EVT_LISTBOX, funct)
+        
+    def on_select(self, evt): # used only in case of self.select_all
+        if evt.GetSelection() == 0:
+            for i in self.GetItems():
+                self.SetStringSelection(i, (not self._all_selected))
+            self._all_selected = not self._all_selected
+        post_evt_param_changed(evt)
         
     def SetBounds(self, bounds):
-        self.ids = [i[0] for i in bounds]
-        self.SetItems([i[1] for i in bounds])
+        if self.select_all: 
+            bounds = [[None, self.select_all]] + list(bounds)
+        self.ids, items = zip(*bounds)
+        self.SetItems(items)
     
     def SetValue(self, val):
-        if val is None: 
+        if not val: 
             self.SetSelection(-1)
             return
         if self.multichoice:
-            for v in val:
-                self.SetSelection(self.ids.index(v))
+            if val == 'all':
+                val = self.ids
+            elif val == 'none':
+                val = []
+            for n, v in enumerate(self.ids):
+                self.SetSelection(n, (v in val))
         else:
             self.SetSelection(self.ids.index(val))
         
     def GetValue(self):
         if self.multichoice:
+            if self.select_all: self.SetSelection(0, False)
             return [self.ids[i] for i in self.GetSelections()]
         else:
             return self.ids[self.GetSelection()]
@@ -129,45 +172,66 @@ class TwoFieldsListWidget(wx.ListBox):
 class MultiChoiceListWidget(wx.CheckListBox):
     def __init__(self, *a, **k):
         self.use_id = k.pop('use_id')
+        self.select_all = k.pop('select_all', '')
         wx.CheckListBox.__init__(self, *a, **k)
         if self.use_id:
             self.ids = []
         self.Bind(wx.EVT_CHECKLISTBOX, self._on_check)
-    
+
     def _on_check(self, evt):
-        self.SetSelection(evt.GetSelection())
+        item = evt.GetSelection()
+        if self.select_all and (item == 0):
+            check = self.IsChecked(0)
+            for n, i in enumerate(self.GetItems()[1:]):
+                self.Check(n+1, check)
+        self.SetSelection(item)
         post_evt_param_changed(evt)
         
     def SetBounds(self, bounds):
         if self.use_id:
-            self.ids = [i[0] for i in bounds]
-            self.SetItems([i[1] for i in bounds]) 
+            if self.select_all:
+                bounds = [[None, self.select_all]] + list(bounds)
+            self.ids, items = zip(*bounds)
+            self.SetItems(items)
         else:
+            if self.select_all: 
+                bounds = [self.select_all] + list(bounds)
             self.SetItems(bounds)
         
     def SetValue(self, val):
-        if val is None: 
+        if not val: 
             self.SetSelection(-1)
             return
+        elif val == 'none':
+            val = []
         if self.use_id:
-            for v in val:
-                self.SetSelection(self.ids.index(v))
+            if val == 'all':
+                val = self.ids
+            for n, v in enumerate(self.ids):
+                self.Check(n, (v in val))
         else:
-            self.SetStringSelection(val)
+            strings = self.GetStrings()
+            if val == 'all':
+                val = strings
+            for n, v in enumerate(strings):
+                self.Check(n, (v in val))
         
     def GetValue(self):
         if self.use_id:
-            return [self.ids[i] for i in self.GetSelections()]
+            return [n+1 for n, i in enumerate(self.ids[1:]) if self.IsChecked(i)]
         else:
-            return self.GetStringSelection()
+            res = list(self.GetCheckedStrings())
+            try: res.remove(self.select_all)
+            except ValueError: pass
+            return res
         
-def symple_list(parent, use_id=False, multichoice=False): 
+def symple_list(parent, use_id=False, multichoice=False, select_all=False): 
     if multichoice and wx.PlatformInfo[1] in ('wxMSW', 'wxGTK'):
-        return MultiChoiceListWidget(parent, use_id=use_id)
+        return MultiChoiceListWidget(parent, use_id=use_id, select_all=select_all)
     if use_id:
-        return TwoFieldsListWidget(parent, multichoice=multichoice)
+        return TwoFieldsListWidget(parent, multichoice=multichoice, select_all=select_all)
     else:
-        return SimpleListWidget(parent, multichoice=multichoice)
+        return SimpleListWidget(parent, multichoice=multichoice, select_all=select_all)
         
 
 # 'droplist' type input parameter ==============================================
