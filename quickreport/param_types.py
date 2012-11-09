@@ -28,17 +28,27 @@ __all__ = ['text', 'integer', 'boolean',
 # 'text' type input parameter =================================================
 class TextWidget(wx.TextCtrl):
     def __init__(self, *a, **k):
+        use_evt_char = k.pop('track_changes', False)
         wx.TextCtrl.__init__(self, *a, **k)
-        self.Bind(wx.EVT_KILL_FOCUS, self.on_kill_focus)
+        self._val = ''
+        evt = wx.EVT_CHAR if use_evt_char else wx.EVT_KILL_FOCUS
+        self.Bind(evt, self.on_change)
     
-    def on_kill_focus(self, evt):
-        if self.IsModified(): 
-            self.DiscardEdits()
+    def on_change(self, evt):
+        evt.Skip()
+        val = self.GetValue() 
+        if val != self._val:
+            self._val = val
             post_evt_param_changed(evt)
+    
+    def SetValue (self, val):
+        self._val = val
+        wx.TextCtrl.SetValue(self, val)
         
     def SetBounds(self, val): pass
         
-def text(parent): return TextWidget(parent)
+def text(parent, track_changes=False): 
+    return TextWidget(parent, track_changes=track_changes)
     
     
 # 'integer' type input parameter ===============================================
