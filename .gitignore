@@ -29,8 +29,10 @@ nosetests.xml
 # Translations
 *.mo
 
-# doc sources
-docsources
+# doc sources, sphinx files
+docs/source
+docs/makefile
+docs/make.bat
 
 # notes, etc.
 notes
