@@ -29,7 +29,10 @@ nosetests.xml
 # Translations
 *.mo
 
-# Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
+# doc sources
+docsources
+
+# notes, etc.
+notes
+
+
