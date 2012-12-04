@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>6. Gli elementi opzionali dei parametri. &mdash; QuickReport v0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="QuickReport v0.1.0 documentation" href="index.html" />
+    <link rel="next" title="7. params.py: un riassunto." href="riassuntoparams.html" />
+    <link rel="prev" title="5. Definire i parametri di input." href="parametri.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="riassuntoparams.html" title="7. params.py: un riassunto."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="parametri.html" title="5. Definire i parametri di input."
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">QuickReport v0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p># -<em>- coding: utf8 -</em>-</p>
+<div class="section" id="gli-elementi-opzionali-dei-parametri">
+<h1>6. Gli elementi opzionali dei parametri.<a class="headerlink" href="#gli-elementi-opzionali-dei-parametri" title="Permalink to this headline">¶</a></h1>
+<p>Abbiamo visto nel capitolo precedente che <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.PARAMETERS</span></tt> è un dizionario che elenca i parametri necessari per ciascun report. Ogni parametro è specificato da una tupla di quattro elementi: i primi tre sono fissi e obbligatori, mentre il quarto è un dizionario di elementi opzionali.</p>
+<p>Gli elementi opzionali possibili sono numerosi: in questo capitolo li esaminiamo divisi per gruppi, ma intanto eccoli elencati tutti per comodità:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">validator</span></tt>: un validatore wxPython per il parametro</li>
+<li><tt class="docutils literal"><span class="pre">null</span></tt>: se il paramentro può avere valore &#8220;Null&#8221;, una label per la gui</li>
+<li><tt class="docutils literal"><span class="pre">null_default</span></tt>: se <tt class="xref docutils literal"><span class="pre">True</span></tt>, il parametro è &#8220;Null&#8221; di default</li>
+<li><tt class="docutils literal"><span class="pre">null_value</span></tt>: l&#8217;eventuale valore da dare allo stato di &#8220;Null&#8221;</li>
+<li><tt class="docutils literal"><span class="pre">default</span></tt>: un valore di default per il parametro</li>
+<li><tt class="docutils literal"><span class="pre">bounds</span></tt>: dei bounds per il parametro</li>
+<li><tt class="docutils literal"><span class="pre">func_default</span></tt>: una funzione che restituisce un default</li>
+<li><tt class="docutils literal"><span class="pre">func_bounds</span></tt>: una funzione che restituisce dei bounds</li>
+<li><tt class="docutils literal"><span class="pre">default_bounds</span></tt>: una funzione che restituisce default e bounds</li>
+<li><tt class="docutils literal"><span class="pre">args_default</span></tt>: un dizionario di named arguments da passare a <tt class="docutils literal"><span class="pre">func_default</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">args_bounds</span></tt>: un dizionario di named arguments da passare a <tt class="docutils literal"><span class="pre">func_bounds</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">args_default_bounds</span></tt>: un dizionario di named arguments da passare a <tt class="docutils literal"><span class="pre">default_bounds</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">dep_default</span></tt>: una lista di altri parametri, il cui valore è passato a <tt class="docutils literal"><span class="pre">func_default</span></tt> al momento di valutarla</li>
+<li><tt class="docutils literal"><span class="pre">dep_bounds</span></tt>: una lista di altri parametri, il cui valore è passato a <tt class="docutils literal"><span class="pre">func_bounds</span></tt> al momento di valutarla</li>
+<li><tt class="docutils literal"><span class="pre">dependencies</span></tt>: una lista di altri parametri, il cui valore è passato a <tt class="docutils literal"><span class="pre">default_bounds</span></tt> al momento di valutarla</li>
+<li><tt class="docutils literal"><span class="pre">dependency_if_null</span></tt>: se <tt class="xref docutils literal"><span class="pre">True</span></tt>, e se il paramentro compare come &#8220;dependency&#8221; di altri parametri, al momento della valutazione trasmette il valore effettivo del parametro, senza contare lo stato eventuale di &#8220;Null&#8221;.</li>
+<li><tt class="docutils literal"><span class="pre">recalc</span></tt>: una lista di altri parametri che devono essere ricalcolati quando il valore di questo parametro cambia</li>
+<li><tt class="docutils literal"><span class="pre">recalc_on_null</span></tt>: se <tt class="xref docutils literal"><span class="pre">True</span></tt> (e se il parametro è &#8220;nullabile&#8221;), il ricalcolo dei parametri nella lista dei &#8220;recalc&#8221; avviene anche quando cambia lo stato di &#8220;Null&#8221;.</li>
+</ul>
+<div class="section" id="l-elemento-opzionale-validator">
+<h2>6.1. L&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">validator</span></tt>.<a class="headerlink" href="#l-elemento-opzionale-validator" title="Permalink to this headline">¶</a></h2>
+<p>wx.Python offre il meccanismo dei <tt class="docutils literal"><span class="pre">wx.Validator</span></tt> per la convalida dei dati. Noi consigliamo di usare i Validator solo come ultima risorsa: la cosa migliore è sempre restringere le possibilità di scelta (usando valori di default e bounds, cfr. sotto) così che l&#8217;utente non abbia la possibilità di inserire dati non validi nei parametri.</p>
+<p>In ogni caso, Quickreport mette attualmente a disposizione due validatori che potete usare:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">val.NotEmpty</span></tt> è un validatore che si può applicare alle caselle di testo (<tt class="docutils literal"><span class="pre">typ.text</span></tt>) per segnalare quando sono vuote;</li>
+<li><tt class="docutils literal"><span class="pre">val.ValidPeriod</span></tt> si può applicare ai <tt class="docutils literal"><span class="pre">typ.period</span></tt> per segnalare quando l&#8217;utente immette un periodo negativo.</li>
+</ul>
+<p>Inoltre, è possibile scrivere altri validatori personalizzati nel modulo <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_validators.py</span></tt>: questi saranno disponibili in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.py</span></tt> nel namespace <tt class="docutils literal"><span class="pre">p_val.*</span></tt>.</p>
+<p>La validazione avviene al momento in cui l&#8217;utente fa clic sul pulsante &#8220;report&#8221; dell&#8217;interfaccia: se la validazione fallisce, il parametro corrispondente si colora in giallo e il report non viene generato.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo, il report <tt class="docutils literal"><span class="pre">invoices_period</span></tt> fa uso di un <tt class="docutils literal"><span class="pre">val.ValidPeriod</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="null-null-default-e-null-value-gestire-i-valori-null">
+<h2>6.2. <tt class="docutils literal"><span class="pre">null</span></tt>, <tt class="docutils literal"><span class="pre">null_default</span></tt> e <tt class="docutils literal"><span class="pre">null_value</span></tt>: gestire i valori Null.<a class="headerlink" href="#null-null-default-e-null-value-gestire-i-valori-null" title="Permalink to this headline">¶</a></h2>
+<p>Spesso si desidera permettere che i parametri assumano anche valore &#8220;Null&#8221;. Naturalmente si può gestire &#8220;a mano&#8221; questa evenienza: per esempio, se il parametro offre una lista di valori tra cui scegliere (è un <tt class="docutils literal"><span class="pre">typ.symple_list</span></tt> per esempio), si può aggiungere un valore &#8220;vuoto&#8221; alla lista.</p>
+<p>Tuttavia Quickreport mette a disposizione un meccanismo più generale per affrontare queste situazioni. Il valore opzionale <tt class="docutils literal"><span class="pre">'null'</span></tt>, se presente, segnala che il parametro può essere &#8220;nullabile&#8221;. Dal punto di vista dell&#8217;interfaccia utente, al parametro viene affiancato un CheckBox: se l&#8217;utente flagga il CheckBox, il parametro si disabilita, e assume valore &#8220;Null&#8221;.</p>
+<p>Se si aggiunge <tt class="docutils literal"><span class="pre">'null'</span></tt> al dizionario degli elementi opzionali di un parametro, la sintassi da rispettare è come in questo esempio:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;null&#39;</span> <span class="p">:</span> <span class="s">&#39;testo di spiegazione&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Il breve testo di spiegazione verrà visualizzato nella gui accanto al CheckBox, per indicare all&#8217;utente che cosa significa &#8220;nullare&#8221; il parametro.</p>
+<p>Inoltre, se si vuole che il paramentro sia essere &#8220;nullato&#8221; per default, si può aggiungere:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;null_default&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Se <tt class="docutils literal"><span class="pre">'null_default'</span></tt> non viene usato, allora Quickreport non &#8220;nullerà&#8221; il parametro per default.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo, i report <tt class="docutils literal"><span class="pre">tracks</span></tt> e <tt class="docutils literal"><span class="pre">invoices_by_contry</span></tt> fanno uso di parametri &#8220;nullabili&#8221;.</p>
+</div>
+<p>Infine, se un parametro è &#8220;nullabile&#8221;, allora quando l&#8217;utente scelga di flaggare il &#8220;Null&#8221;, il parametro assume il valore Python <tt class="xref docutils literal"><span class="pre">None</span></tt>. In genere questo comportamento di default è quello che vi serve. Ma se così non fosse, potete specificare un valore diverso per la condizione di &#8220;Null&#8221;; aggiungendo l&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'null_value'</span></tt>. Per esempio:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;null_value&#39;</span> <span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>passerà una stringa vuota in caso di &#8220;Null&#8221;.</p>
+<p>Ovviamente usare <tt class="docutils literal"><span class="pre">'null_value'</span></tt> e <tt class="docutils literal"><span class="pre">'null_default'</span></tt> ha significato solo in presenza anche dell&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'null'</span></tt>.</p>
+</div>
+<div class="section" id="bounds-e-default-limitare-le-scelte-per-un-parametro">
+<h2>6.4. <tt class="docutils literal"><span class="pre">bounds</span></tt> e <tt class="docutils literal"><span class="pre">default</span></tt>: limitare le scelte per un parametro.<a class="headerlink" href="#bounds-e-default-limitare-le-scelte-per-un-parametro" title="Permalink to this headline">¶</a></h2>
+<p>Nel gergo di Quickreport, i &#8220;bounds&#8221; di un parametro sono i &#8220;limiti&#8221; che quel parametro può assumere. Che cosa siano questi limiti, dipende dal tipo di parametro: per un <tt class="docutils literal"><span class="pre">typ.integer</span></tt> o un <tt class="docutils literal"><span class="pre">typ.date</span></tt>, sono il valore minimo e il massimo che il parametro può assumere; per un <tt class="docutils literal"><span class="pre">typ.symple_list</span></tt>, sono una lista di valori tra cui l&#8217;utente deve scegliere; e così via.</p>
+<p>Quindi, a seconda del parametro, può avere senso scrivere:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;bounds&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="s">&#39;Torino&#39;</span><span class="p">,</span> <span class="s">&#39;Milano&#39;</span><span class="p">,</span> <span class="s">&#39;Firenze&#39;</span><span class="p">,</span> <span class="s">&#39;Roma&#39;</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>oppure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;bounds&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>eccetera.</p>
+<p>Segue una lista dei &#8220;bounds&#8221; accettati dai vari parametri di Quickreport:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">typ.text</span></tt>: non è possibile assegnare bounds.</li>
+<li><tt class="docutils literal"><span class="pre">typ.integer</span></tt>: <tt class="docutils literal"><span class="pre">(int,</span> <span class="pre">int)</span></tt> -&gt; valore minimo e massimo.</li>
+<li><tt class="docutils literal"><span class="pre">typ.boolean</span></tt>: non è possibile assegnare bounds.</li>
+<li><tt class="docutils literal"><span class="pre">typ.symple_list</span></tt> e <tt class="docutils literal"><span class="pre">typ.droplist</span></tt>: <tt class="docutils literal"><span class="pre">(str,</span> <span class="pre">...)</span></tt> -&gt; i valori tra cui scegliere (una tupla di stringhe).</li>
+<li><tt class="docutils literal"><span class="pre">typ.id_list</span></tt> e <tt class="docutils literal"><span class="pre">typ.id_droplist</span></tt>: <tt class="docutils literal"><span class="pre">((id,</span> <span class="pre">str),</span> <span class="pre">...)</span></tt> -&gt; i valori tra cui scegliere: una tupla di tuple. L&#8217;elemento &#8220;id&#8221; può essere qualsiasi cosa (perché non verrà visualizzato nel combobox), purché gli id siano univoci; il secondo elemento deve essere per forza una stringa.</li>
+<li><tt class="docutils literal"><span class="pre">typ.date</span></tt>: <tt class="docutils literal"><span class="pre">(datetime.date,</span> <span class="pre">datetime.date)</span></tt> -&gt; valore minimo e massimo.</li>
+<li><tt class="docutils literal"><span class="pre">typ.period</span></tt>: <tt class="docutils literal"><span class="pre">(datetime.date,</span> <span class="pre">datetime.date)</span></tt> -&gt; valore minimo e massimo.</li>
+<li><tt class="docutils literal"><span class="pre">typ.month</span></tt>, <tt class="docutils literal"><span class="pre">typ.bimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.trimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.quadrimester</span></tt>, <tt class="docutils literal"><span class="pre">typ.semester</span></tt>: <tt class="docutils literal"><span class="pre">(datetime.date,</span> <span class="pre">datetime.date)</span></tt> -&gt; valore minimo e massimo (solo l&#8217;anno viene preso in considerazione).</li>
+</ul>
+<p>Il valore opzionale <tt class="docutils literal"><span class="pre">'default'</span></tt> specifica semplicemente il valore di default per il parametro. Può essere usato anche in assenza di <tt class="docutils literal"><span class="pre">'bounds'</span></tt> (per indicare, per esempio, il valore di default di una casella di testo).</p>
+<p>Se avete indicato dei <tt class="docutils literal"><span class="pre">'bounds'</span></tt> per il parametro, consigliamo tuttavia di indicare sempre anche un <tt class="docutils literal"><span class="pre">'default'</span></tt>, per evitare che wxPython attribuisca un default in contrasto con le vostre intenzioni. Per esempio, per una lista scrivete sempre:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;bounds&#39;</span> <span class="p">:</span> <span class="p">(</span><span class="s">&#39;Torino&#39;</span><span class="p">,</span> <span class="s">&#39;Milano&#39;</span><span class="p">,</span> <span class="s">&#39;Firenze&#39;</span><span class="p">,</span> <span class="s">&#39;Roma&#39;</span><span class="p">),</span>
+ <span class="s">&#39;default&#39;</span> <span class="p">:</span> <span class="s">&#39;Torino&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Se trascurate di indicare il <tt class="docutils literal"><span class="pre">'default'</span></tt>, wxPython assume che il valore predefinito sia <tt class="docutils literal"><span class="pre">''</span></tt> (la stringa vuota), e pertanto, se l&#8217;utente non modifica nulla, il parametro assume un valore che non è compreso nella lista che avete indicato nei vostri <tt class="docutils literal"><span class="pre">'bounds'</span></tt>.</p>
+</div>
+<div class="section" id="func-bounds-func-default-default-bounds-valori-dinamici-per-default-e-bounds">
+<h2>6.5. <tt class="docutils literal"><span class="pre">func_bounds</span></tt>, <tt class="docutils literal"><span class="pre">func_default</span></tt>, <tt class="docutils literal"><span class="pre">default_bounds</span></tt>: valori dinamici per default e bounds.<a class="headerlink" href="#func-bounds-func-default-default-bounds-valori-dinamici-per-default-e-bounds" title="Permalink to this headline">¶</a></h2>
+<p>I valori opzionali <tt class="docutils literal"><span class="pre">'bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'default'</span></tt> sono piuttosto limitati, perché vi permettono di inserire solo dei valori &#8220;statici&#8221;. Ma spesso voi volete decidere bounds e default in modo &#8220;dinamico&#8221;, per esempio interrogando il database, o in base a qualche altra condizione esterna.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">L&#8217;esempio più facile, nella demo, è il report <tt class="docutils literal"><span class="pre">employees</span></tt>, dove la lista degli impiegati, naturalmente, è estratta dal database &#8220;sul momento&#8221;.</p>
+</div>
+<p>Per consentirvi di calcolare bounds e default in modo &#8220;dinamico&#8221;, Quickreport mette a disposizione gli elementi opzionali <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'func_default'</span></tt> e <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt>.</p>
+<p>Ciascuno di questi tre elementi opzionali, se usato, non va impostato su una lista di parametri, ma <em>sul nome di una funzione</em> che verrà eseguita a runtime. Più precisamente:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">func_bounds</span></tt> deve essere impostato sul nome di una funzione che, eseguita, restituisce una lista di valori (bounds)</li>
+<li><tt class="docutils literal"><span class="pre">func_default</span></tt> deve essere impostato sul nome di una funzione che, eseguita, restituisce un singolo valore (default)</li>
+<li><tt class="docutils literal"><span class="pre">default_bounds</span></tt> deve essere impostato sul nome di una funzione che, eseguita, restituisce una tupla di due valori: un default, e una lista di bounds.</li>
+</ul>
+<p>La ragione per cui Quickreport mette a disposizione anche <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> è che molto spesso, il valore di default si sceglie tra uno dei bounds possibili: di conseguenza vorrete spesso utilizzare la stessa funzione per calcolare entrambi.</p>
+<p>Quickreport offre al momento tre funzioni di utilità generale per calcolare default e bounds temporali in casi tipici, e le raccoglie nel namespace <tt class="docutils literal"><span class="pre">dfl.*</span></tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">dfl.date_today(offset=0)</span></tt> può essere usata per un <tt class="docutils literal"><span class="pre">'func_default'</span></tt>, e restituisce la data di oggi (più o meno un numero di giorni <tt class="docutils literal"><span class="pre">offset</span></tt>)</li>
+<li><tt class="docutils literal"><span class="pre">dfl.years_span(min_offset=-10,</span> <span class="pre">max_offset=10)</span></tt> può essere usata con <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, e restituisce un intervallo di anni centrato sull&#8217;anno corrente, da un minimo di <tt class="docutils literal"><span class="pre">min_offset</span></tt> a un massimo di <tt class="docutils literal"><span class="pre">max_offset</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">dfl.today_years_span(min_offset=-10,</span> <span class="pre">max_offset=10)</span></tt> può essere usata con <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt>, ed è una combinazione delle due precedenti: restitusce la data corrente e un intervallo di anni.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Il modo corretto di usare queste funzioni è scrivere, per esempio, <tt class="docutils literal"><span class="pre">{'func_default'</span> <span class="pre">:</span> <span class="pre">dfl.date_today}</span></tt>. Questo chiamerà la funzione con il valore predefinito per l&#8217;argomento opzionale <tt class="docutils literal"><span class="pre">offset</span></tt>. E se volessimo specificare un valore diverso per <tt class="docutils literal"><span class="pre">offset</span></tt>? Per questo bisognerà pazientare fino al prossimo paragrafo...</p>
+</div>
+<p>Ma nella maggior parte dei casi sarete voi stessi a scrivere le funzioni che vi servono per il vostro progetto. Dovete scriverle nel modulo <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_defaults.py</span></tt>, e saranno importate automaticamente in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.py</span></tt> nel namespace <tt class="docutils literal"><span class="pre">p_dfl.*</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo ci sono molti report che fanno uso di <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'func_default'</span></tt> e <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt>. Guardate anche il modulo <tt class="docutils literal"><span class="pre">chinook_demo.param_defaults.py</span></tt> per avere un&#8217;idea di come scrivere le funzioni per i bounds e defaults nei vostri progetti.</p>
+</div>
+<p>Un&#8217;osservazione conclusiva: chiaramente, potete usare nello stesso parametro gli elementi opzionali &#8220;statici&#8221; insieme a quelli &#8220;dinamici&#8221;, se sapete cosa state facendo. Per esempio, se usate <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt> per determinare dinamicamente una lista di città, ma siete sicuri che nella lista ci sarà sempre Roma, potete anche usare un default statico:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;func_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">my_list_of_cities</span><span class="p">,</span>  <span class="c"># dinamico</span>
+ <span class="s">&#39;default&#39;</span> <span class="p">:</span> <span class="s">&#39;Roma&#39;</span><span class="p">}</span>                       <span class="c"># statico!</span>
+</pre></div>
+</div>
+<p>Però dovete essere sicuri del fatto vostro: se in qualche circostanza <tt class="docutils literal"><span class="pre">p_dfl.my_list_of_cities</span></tt> non dovesse includere anche Roma, le conseguenze sarebbero spiacevoli...</p>
+<p>In genere, decidere quali usare tra <tt class="docutils literal"><span class="pre">'default'</span></tt>, <tt class="docutils literal"><span class="pre">'bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'func_default'</span></tt>, <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> dipende dalle situazioni, ed è una questione di buon senso. Tuttavia, le regole precise sono queste:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> se presente ha sempre la precedenza su tutti gli altri. Quindi, per esempio, se indicate contemporaneamente <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, quest&#8217;ultima verrà ignorata;</li>
+<li>le versioni dinamiche hanno sempre la precedenza sulle corrispondenti statiche: quindi <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt> ha la precedenza su <tt class="docutils literal"><span class="pre">'bounds'</span></tt>, e <tt class="docutils literal"><span class="pre">'funct_default'</span></tt> ha la precedenza su <tt class="docutils literal"><span class="pre">'default'</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="args-default-args-bounds-e-args-default-bounds-argomenti-opzionali-per-le-funzioni-di-bounds-e-defaults">
+<h2>6.6. <tt class="docutils literal"><span class="pre">args_default</span></tt>, <tt class="docutils literal"><span class="pre">args_bounds</span></tt> e <tt class="docutils literal"><span class="pre">args_default_bounds</span></tt>: argomenti opzionali per le funzioni di bounds e defaults.<a class="headerlink" href="#args-default-args-bounds-e-args-default-bounds-argomenti-opzionali-per-le-funzioni-di-bounds-e-defaults" title="Permalink to this headline">¶</a></h2>
+<p>Se usate <tt class="docutils literal"><span class="pre">'func_default'</span></tt>, <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt> o <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> per calcolare dinamicamente bounds e defaults, allora potete scrivere delle funzioni che accettano anche named arguments per personalizzare ulteriormente l&#8217;output.</p>
+<p>Per esempio, la funzione <tt class="docutils literal"><span class="pre">dfl.date_today</span></tt> che abbiamo visto nel paragrafo precedente, accetta anche un argomento opzionale <tt class="docutils literal"><span class="pre">offset</span></tt>.</p>
+<p>Per passare argomenti alle funzioni definite per <tt class="docutils literal"><span class="pre">'func_default'</span></tt>, <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> Quinckreport vi mette a disposizione gli elementi opzionali <tt class="docutils literal"><span class="pre">'args_default'</span></tt>, <tt class="docutils literal"><span class="pre">'args_bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'args_default_bounds'</span></tt> (rispettivamente).</p>
+<p>Così, se volete che un parametro sia impostato per default sulla data di ieri, potete scrivere:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;func_default&#39;</span> <span class="p">:</span> <span class="n">dfl</span><span class="o">.</span><span class="n">date_today</span><span class="p">,</span>
+ <span class="s">&#39;args_default&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s">&#39;offset&#39;</span> <span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo, il report <tt class="docutils literal"><span class="pre">invoices_period</span></tt> fa uso di argomenti opzionali.</p>
+</div>
+</div>
+<div class="section" id="dep-default-dep-bounds-e-dependencies-determinare-bounds-e-default-di-un-parametro-basandosi-sul-valore-degli-altri">
+<h2>6.7. <tt class="docutils literal"><span class="pre">dep_default</span></tt>, <tt class="docutils literal"><span class="pre">dep_bounds</span></tt> e <tt class="docutils literal"><span class="pre">dependencies</span></tt>: determinare bounds e default di un parametro basandosi sul valore degli altri.<a class="headerlink" href="#dep-default-dep-bounds-e-dependencies-determinare-bounds-e-default-di-un-parametro-basandosi-sul-valore-degli-altri" title="Permalink to this headline">¶</a></h2>
+<p>Una delle complicazioni più frequenti nel raccogliere i parametri per la reportistica, è che spesso il valore di un parametro deve dipendere dal valore di altri. Per esempio, un parametro potrebbe contenere una lista di Stati: a seconda dello Stato scelto dall&#8217;utente, un secondo parametro dovrebbe mostrare una lista di città di quello Stato.</p>
+<p>Per affrontare queste situazioni, Quickreport mette a disposizione tre elementi opzionali nuovi che sviluppano il concetto di &#8220;dependency&#8221;: <tt class="docutils literal"><span class="pre">'dep_default'</span></tt>, <tt class="docutils literal"><span class="pre">'dep_bounds'</span></tt> e <tt class="docutils literal"><span class="pre">'dependencies'</span></tt>.</p>
+<p>Ciascuno di questi elementi, se usato, deve essere impostato su una lista di <em>nomi di altri parametri</em>: indica cioè di quali altri parametri bisogna tener conto quando si calcolano dinamicamente bounds e default di un parametro.</p>
+<p>Nel dettaglio, la cosa funziona in modo molto simile al meccanismo dei parametri opzionali visto sopra. Quando scrivete la vostra funzione per il calcolo dei bounds/default di un parametro, potete includere nella sua signature dei named arguments corrispondenti al nome di altri parametri. Poi dovete impostare <tt class="docutils literal"><span class="pre">'dep_default'</span></tt>, <tt class="docutils literal"><span class="pre">'dep_bounds'</span></tt> oppure <tt class="docutils literal"><span class="pre">'dependencies'</span></tt> (a seconda che la vostra funzione sia richiamata da <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'func_default'</span></tt> o <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt> rispettivamente) con una lista di questi altri parametri.</p>
+<p>Al momento di calcolare bounds e default del parametro, Quickreport preleva i valori di tutte le &#8220;dependency&#8221; che avete indicato, e li passa alla vostra funzione.</p>
+<p>Un esempio chiarirà meglio le cose: riprendiamo il caso di &#8220;Stati-città&#8221;, menzionato sopra. Supponiamo di avere due parametri, chiamati <tt class="docutils literal"><span class="pre">stato</span></tt> e <tt class="docutils literal"><span class="pre">citta</span></tt>. Entrambi i paramentri hanno default e bounds determinati dinamicamente, ma il secondo deve tener conto anche del valore del primo.</p>
+<p>Ecco come imposteremo i parametri in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.params.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># il parametro &quot;stato&quot;:</span>
+<span class="p">(</span><span class="s">&#39;stato&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona uno Stato&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_degli_stati</span> <span class="p">}</span> <span class="p">),</span>
+<span class="c"># il parametro &quot;citta&quot;:</span>
+<span class="p">(</span><span class="s">&#39;citta&#39;</span><span class="p">,</span> <span class="s">u&#39;Seleziona una Città&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_delle_citta_per_stato</span><span class="p">,</span>
+    <span class="s">&#39;dependencies&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;stato&#39;</span><span class="p">]</span>  <span class="p">}</span>  <span class="p">)</span>
+</pre></div>
+</div>
+<p>E naturalmente, in <tt class="docutils literal"><span class="pre">&lt;progetto&gt;.param_defaults.py</span></tt>, scriveremo una funzione per calcolare la lista delle città che tenga conto degli Stati:</p>
+<div class="highlight-python"><pre>def lista_delle_citta_per_stato(stato=None):
+    # etc. etc.</pre>
+</div>
+<p>Se poi amate particolarmente le complicazioni, sappiate che potete usare contemporaneamente le &#8220;dependency&#8221; e gli argomenti opzionali visti al paragrafo precedente. Per esempio, supponiamo che vogliate calcolare la lista delle città tenendo conto non solo dello Stato, ma anche del numero di abitanti. Potreste scrivere qualcosa del genere:</p>
+<div class="highlight-python"><pre># in &lt;progetto&gt;.params.py:
+('citta', u'Seleziona una Città', typ.droplist,
+   {'default_bounds' : p_dfl.lista_delle_citta_per_stato,
+    'dependencies' : ['stato'],
+    'args_default_bounds' : {'min_popolazione' : 10000} }  )
+
+# in &lt;progetto&gt;.param_defaults.py:
+def lista_delle_citta_per_stato(stato=None, min_popolazione=None):
+    # etc. etc.</pre>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">La demo ha alcuni report che usano il meccanismo delle &#8220;dependency&#8221;: <tt class="docutils literal"><span class="pre">album_artis</span></tt>, <tt class="docutils literal"><span class="pre">traks</span></tt> e <tt class="docutils literal"><span class="pre">invoices_by_country</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="dependency-if-null-decidere-che-valore-passare-in-caso-di-null">
+<h2>6.8. <tt class="docutils literal"><span class="pre">dependency_if_null</span></tt>: decidere che valore passare in caso di &#8220;Null&#8221;.<a class="headerlink" href="#dependency-if-null-decidere-che-valore-passare-in-caso-di-null" title="Permalink to this headline">¶</a></h2>
+<p>Ecco un problema ulteriore: se avete dichiarato &#8220;nullabile&#8221; un parametro (inserendo l&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'null'</span></tt>, vedi sopra), e questo parametro compare nella lista delle &#8220;dependency&#8221; di altri paramentri, come bisogna comportarsi quando l&#8217;utente decide di &#8220;nullare&#8221; il parametro?</p>
+<p>In questi casi, il comportamento di default di Quickreport è il seguente: se un parametro ha valore &#8220;Null&#8221; al momento di essere richiesto per il calcolo di un altro parametro, allora Quickreport passa il valore definito per &#8220;Null&#8221; (ossia <tt class="xref docutils literal"><span class="pre">None</span></tt>... sempre che non lo abbiate modificato usando <tt class="docutils literal"><span class="pre">'null_value'</span></tt>).</p>
+<p>Talvolta invece volete passare il &#8220;vero&#8221; valore del parametro, anche se in quel momento è &#8220;nullato&#8221;: in questo caso, basta aggiungere agli elementi opzionali del parametro anche il seguente:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;dependency_if_null&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Naturalmente, l&#8217;eventuale presenza di <tt class="docutils literal"><span class="pre">'dependency_if_null'</span></tt> ha effetto solo se il parametro è &#8220;nullabile&#8221; (ossia se ha anche l&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'null'</span></tt>), e se compare nelle &#8220;dependency&#8221; di qualche altro parametro.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo, il report <tt class="docutils literal"><span class="pre">invoices_by_contry</span></tt> e <tt class="docutils literal"><span class="pre">invoices_by_contry</span></tt> usano <tt class="docutils literal"><span class="pre">'dependency_if_null'</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="recalc-decidere-quando-i-parametri-devono-essere-ricalcolati">
+<h2>6.9. <tt class="docutils literal"><span class="pre">recalc</span></tt>: decidere quando i parametri devono essere ricalcolati.<a class="headerlink" href="#recalc-decidere-quando-i-parametri-devono-essere-ricalcolati" title="Permalink to this headline">¶</a></h2>
+<p>Fin qui abbiamo parlato di <strong>come</strong> calcolare dinamicamente i bounds/default dei parametri, ma non di <strong>quando</strong> farlo.</p>
+<p>Quickreport applica tutte le regole definite nei vari <tt class="docutils literal"><span class="pre">'func_default'</span></tt>, <tt class="docutils literal"><span class="pre">'func_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'default_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'args_default'</span></tt>, <tt class="docutils literal"><span class="pre">'args_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'args_default_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'dep_default'</span></tt>, <tt class="docutils literal"><span class="pre">'dep_bounds'</span></tt>, <tt class="docutils literal"><span class="pre">'dependencies'</span></tt> e <tt class="docutils literal"><span class="pre">'dependency_if_null'</span></tt> una prima volta all&#8217;inizio, nella fase di creazione della finestra grafica che presenta i parametri all&#8217;utente.</p>
+<p>In quel momento, tuttti i parametri sono calcolati <strong>nell&#8217;ordine in cui li avete inseriti</strong>. E&#8217; importante ricordarlo, perché se il parametro &#8220;B&#8221; ha bisogno del valore del parametro &#8220;A&#8221; per calcolare il proprio, allora &#8220;B&#8221; dovrebbe essere dichiarato dopo &#8220;A&#8221;.</p>
+<p>Una volta che la finestra è stata creata e l&#8217;utente ne prende il controllo, l&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'recalc'</span></tt> determina quali parametri devono essere ri-calcolati, e quando.</p>
+<p><tt class="docutils literal"><span class="pre">'recalc'</span></tt> deve contenere una lista di nomi di altri parametri da ri-calcolare, ogni volta che il valore del parametro cambia.</p>
+<p>Per chiarire, riprendiamo l&#8217;esempio &#8220;Stato-città&#8221; del paragrafo 6.7.:</p>
+<div class="highlight-python"><pre># in &lt;progetto&gt;.params.py:
+('stato', 'Seleziona uno Stato', typ.droplist,
+   {'default_bounds' : p_dfl.lista_degli_stati } ),
+
+('citta', u'Seleziona una Città', typ.droplist,
+   {'default_bounds' : p_dfl.lista_delle_citta_per_stato,
+    'dependencies' : ['stato'] } )
+
+# in &lt;progetto&gt;.param_defaults.py:
+def lista_delle_citta_per_stato(stato=None):
+    # etc. etc.</pre>
+</div>
+<p>Queste impostazioni sono ancora incomplete: dicono che occorre tener conto del valore di <tt class="docutils literal"><span class="pre">stato</span></tt> per calcolare il valore di <tt class="docutils literal"><span class="pre">citta</span></tt>, ma non dicono <strong>quando</strong> occorre ricalcolare il valore di <tt class="docutils literal"><span class="pre">citta</span></tt>.</p>
+<p>Noi abbiamo bisogno che la lista delle città si aggiorni ogni volta che l&#8217;utente sceglie un nuovo Stato. Basterà quindi aggiungere l&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">'recalc'</span></tt> alla definizione di <tt class="docutils literal"><span class="pre">stato</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># in &lt;progetto&gt;.params.py:</span>
+<span class="p">(</span><span class="s">&#39;stato&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona uno Stato&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_degli_stati</span><span class="p">,</span>
+    <span class="s">&#39;recalc&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;citta&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span>
+<span class="c"># etc. etc.</span>
+</pre></div>
+</div>
+<p>Una considerazione importante: Quickreport non prende in considerazioni <tt class="docutils literal"><span class="pre">'recalc'</span></tt> &#8220;a cascata&#8221;. Ovvero: se &#8220;A&#8221; chiede di ricalcolare &#8220;B&#8221;, e &#8220;B&#8221; prevede il <tt class="docutils literal"><span class="pre">'recalc'</span></tt> di &#8220;C&#8221;, tuttavia &#8220;C&#8221; non verrà ricalcolato quando cambia &#8220;A&#8221;.</p>
+<p>Un esempio chiarirà meglio. Supponiamo di avere una catena &#8220;Stato-Regione-Città&#8221;. Noi vogliamo naturalmente che, cambiando lo Stato, venga ricalcolata anche la lista delle Regioni, e che questo inneschi a sua volta il ricalcolo della lista delle città.</p>
+<p>Verrebbe spontaneo organizzare i parametri in questo modo:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># in &lt;progetto&gt;.params.py:</span>
+<span class="p">(</span><span class="s">&#39;stato&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona uno Stato&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_degli_stati</span><span class="p">,</span>
+    <span class="s">&#39;recalc&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;regione&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span>
+
+<span class="p">(</span><span class="s">&#39;regione&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona una Regione&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_delle_regioni</span><span class="p">,</span>
+    <span class="s">&#39;recalc&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;citta&#39;</span><span class="p">],</span>
+    <span class="s">&#39;dependencies&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;stato&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span>
+
+<span class="p">(</span><span class="s">&#39;citta&#39;</span><span class="p">,</span> <span class="s">u&#39;Seleziona una Città&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_delle_citta</span><span class="p">,</span>
+    <span class="s">&#39;dependencies&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;regione&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Tuttavia questo non funziona, perché Quickreport non esegue <tt class="docutils literal"><span class="pre">'recalc'</span></tt> a cascata: quando cambia lo Stato, viene eseguito il <tt class="docutils literal"><span class="pre">'recalc'</span></tt> della Regione, ma questo non innesca a sua volta il <tt class="docutils literal"><span class="pre">'recalc'</span></tt> della città.</p>
+<p>Il modo giusto di procedere è indicare nell&#8217;elemento <tt class="docutils literal"><span class="pre">'recalc'</span></tt> <strong>tutti</strong> gli altri parametri da ricalcolare, nell&#8217;ordine esatto:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># in &lt;progetto&gt;.params.py:</span>
+<span class="p">(</span><span class="s">&#39;stato&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona uno Stato&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_degli_stati</span><span class="p">,</span>
+    <span class="s">&#39;recalc&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;regione&#39;</span><span class="p">,</span> <span class="s">&#39;citta&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span>  <span class="c"># &lt;- cosi&#39; funziona!!</span>
+
+<span class="p">(</span><span class="s">&#39;regione&#39;</span><span class="p">,</span> <span class="s">&#39;Seleziona una Regione&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_delle_regioni</span><span class="p">,</span>
+    <span class="s">&#39;recalc&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;citta&#39;</span><span class="p">],</span>
+    <span class="s">&#39;dependencies&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;stato&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">),</span>
+
+<span class="p">(</span><span class="s">&#39;citta&#39;</span><span class="p">,</span> <span class="s">u&#39;Seleziona una Città&#39;</span><span class="p">,</span> <span class="n">typ</span><span class="o">.</span><span class="n">droplist</span><span class="p">,</span>
+   <span class="p">{</span><span class="s">&#39;default_bounds&#39;</span> <span class="p">:</span> <span class="n">p_dfl</span><span class="o">.</span><span class="n">lista_delle_citta</span><span class="p">,</span>
+    <span class="s">&#39;dependencies&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s">&#39;regione&#39;</span><span class="p">]</span> <span class="p">}</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>Perché Quickreport non esegue <tt class="docutils literal"><span class="pre">'recalc'</span></tt> &#8220;a cascata&#8221;? Per evitare il rischio che una impostazione sbagliata provochi un <tt class="docutils literal"><span class="pre">'recalc'</span></tt> ricorsivo: &#8220;A&#8221; che chiama &#8220;B&#8221; che chiama &#8220;A&#8221;, etc. Inoltre, anche se la sequenza:</p>
+<div class="highlight-python"><pre>'stato', #...
+    'recalc' : ['regione', 'citta']
+
+'regione', #...
+    'recalc' : ['citta']</pre>
+</div>
+<p>può essere vista come una piccola ridondanza, secondo noi ci guadagna in chiarezza. Infatti in questo modo siete costretti a specificare, per ciascun parametro, <strong>tutti</strong> gli altri parametri da ricalcolare, nell&#8217;ordine esatto.</p>
+</div>
+<div class="section" id="recalc-on-null-decidere-se-innescare-il-ricalcolo-quando-cambia-lo-stato-di-null">
+<h2>6.10. <tt class="docutils literal"><span class="pre">recalc_on_null</span></tt>: decidere se innescare il ricalcolo quando cambia lo stato di Null.<a class="headerlink" href="#recalc-on-null-decidere-se-innescare-il-ricalcolo-quando-cambia-lo-stato-di-null" title="Permalink to this headline">¶</a></h2>
+<p>Ecco un&#8217;ultima raffinatezza. Se un parametro è &#8220;nullabile&#8221; e prevede una lista di <tt class="docutils literal"><span class="pre">'recalc'</span></tt>, il ricalcolo dovrebbe essere innescato anche quando l&#8217;utente cambia lo stato di &#8220;Null&#8221; del parametro?</p>
+<p>Il comportamento di default di Quickreport è: no.</p>
+<p>Tuttavia, se invece volete innescare il ricalcolo dei paramentri collegati anche quando cambia lo stato di &#8220;Null&#8221;, basterà inserire l&#8217;elemento opzionale:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;recalc_on_null&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Ovviamente, <tt class="docutils literal"><span class="pre">'recalc_on_null'</span></tt> non ha nessun effetto se non è anche presente anche una lista di <tt class="docutils literal"><span class="pre">'recalc'</span></tt>.</p>
+<p>Ricordatevi anche che è possibile usare <tt class="docutils literal"><span class="pre">'recalc_on_null'</span></tt> in accoppiata con <tt class="docutils literal"><span class="pre">'dependency_if_null'</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;recalc_on_null&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">&#39;dependency_if_null&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>se volete che, oltre che innescare il ricalcolo, il valore usato tenga conto dello stato di &#8220;Null&#8221;.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Nella demo, il report <tt class="docutils literal"><span class="pre">tracks</span></tt> fa uso di <tt class="docutils literal"><span class="pre">'recalc_on_null'</span></tt> e di <tt class="docutils literal"><span class="pre">'dependency_if_null'</span></tt></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">6. Gli elementi opzionali dei parametri.</a><ul>
+<li><a class="reference internal" href="#l-elemento-opzionale-validator">6.1. L&#8217;elemento opzionale <tt class="docutils literal"><span class="pre">validator</span></tt>.</a></li>
+<li><a class="reference internal" href="#null-null-default-e-null-value-gestire-i-valori-null">6.2. <tt class="docutils literal"><span class="pre">null</span></tt>, <tt class="docutils literal"><span class="pre">null_default</span></tt> e <tt class="docutils literal"><span class="pre">null_value</span></tt>: gestire i valori Null.</a></li>
+<li><a class="reference internal" href="#bounds-e-default-limitare-le-scelte-per-un-parametro">6.4. <tt class="docutils literal"><span class="pre">bounds</span></tt> e <tt class="docutils literal"><span class="pre">default</span></tt>: limitare le scelte per un parametro.</a></li>
+<li><a class="reference internal" href="#func-bounds-func-default-default-bounds-valori-dinamici-per-default-e-bounds">6.5. <tt class="docutils literal"><span class="pre">func_bounds</span></tt>, <tt class="docutils literal"><span class="pre">func_default</span></tt>, <tt class="docutils literal"><span class="pre">default_bounds</span></tt>: valori dinamici per default e bounds.</a></li>
+<li><a class="reference internal" href="#args-default-args-bounds-e-args-default-bounds-argomenti-opzionali-per-le-funzioni-di-bounds-e-defaults">6.6. <tt class="docutils literal"><span class="pre">args_default</span></tt>, <tt class="docutils literal"><span class="pre">args_bounds</span></tt> e <tt class="docutils literal"><span class="pre">args_default_bounds</span></tt>: argomenti opzionali per le funzioni di bounds e defaults.</a></li>
+<li><a class="reference internal" href="#dep-default-dep-bounds-e-dependencies-determinare-bounds-e-default-di-un-parametro-basandosi-sul-valore-degli-altri">6.7. <tt class="docutils literal"><span class="pre">dep_default</span></tt>, <tt class="docutils literal"><span class="pre">dep_bounds</span></tt> e <tt class="docutils literal"><span class="pre">dependencies</span></tt>: determinare bounds e default di un parametro basandosi sul valore degli altri.</a></li>
+<li><a class="reference internal" href="#dependency-if-null-decidere-che-valore-passare-in-caso-di-null">6.8. <tt class="docutils literal"><span class="pre">dependency_if_null</span></tt>: decidere che valore passare in caso di &#8220;Null&#8221;.</a></li>
+<li><a class="reference internal" href="#recalc-decidere-quando-i-parametri-devono-essere-ricalcolati">6.9. <tt class="docutils literal"><span class="pre">recalc</span></tt>: decidere quando i parametri devono essere ricalcolati.</a></li>
+<li><a class="reference internal" href="#recalc-on-null-decidere-se-innescare-il-ricalcolo-quando-cambia-lo-stato-di-null">6.10. <tt class="docutils literal"><span class="pre">recalc_on_null</span></tt>: decidere se innescare il ricalcolo quando cambia lo stato di Null.</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="parametri.html"
+                        title="previous chapter">5. Definire i parametri di input.</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="riassuntoparams.html"
+                        title="next chapter">7. <tt class="docutils literal"><span class="pre">params.py</span></tt>: un riassunto.</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/opzioniparametri.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="riassuntoparams.html" title="7. params.py: un riassunto."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="parametri.html" title="5. Definire i parametri di input."
+             >previous</a> |</li>
+        <li><a href="index.html">QuickReport v0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Riccardo Polignieri.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>

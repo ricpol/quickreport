@@ -1,0 +1,148 @@
+# -*- coding: utf8 -*-
+
+9. I tipi per gli output dei report.
+====================================
+
+Quickreport può generare report in vari formati. Attualmente sono disponibili:
+
+* solo testo (delimitato da tabulazioni);
+* csv (delimitato da punti-e-virgola;
+* html;
+* excel (solo se si ha installato il modulo ``xlwt``);
+* output su schermo.
+
+Un aspetto importante della generazione dei report è decidere come "renderizzare" i tipi di dato in arrivo dal database, a seconda del formato di output prescelto. 
+
+Questo può essere complicato da vari fattori. In primo luogo, i "tipi" dei dati non possono essere semplicemente quelli indicati dal database: spesso i database sono tipati in modo diverso, senza contare che sqlite può essere type-less; cercare di inferire automaticamente il tipo dei dati dal database va ben oltre lo scopo di Quickreport. In secondo luogo, il rendering di un certo tipo può differire a seconda dell'output: un intero ha bisogno di essere convertito in stringa se l'output è "solo testo", ma può restare così com'è se l'output è "excel". In terzo luogo, potrebbe essere necessario renderizzare in modi diversi anche a seconda dei diversi report: si potrebbe volere che le date siano formattate in più modi diversi, per esempio. 
+
+Quickreport affronta il problema con una filosofia precisa:
+
+* presenta un suo insieme di tipi ben definiti (con la possibilità di aggiungerne di nuovi all'occorrenza); 
+* vi chiede di comunicare sempre *esplicitamente* quale tipo di dati deve essere usato per ciascuna colonna: come abbiamo visto nel capitolo precedente, questo avviene in ``<progetto>.query.py`` subito prima di trasmettere i dati ricavati dalla query;
+* ha una gerarchia di renderer predefiniti per ciascun tipo, e per ciascun output: nella maggior parte dei casi sarà sufficiente, e voi non dovete fare nulla;
+* in caso di necessità, potete facilmente fare modifiche e aggiunte ai renderer predefiniti. 
+
+In questo capitolo esaminiamo la gerarchia dei tipi di output predefiniti, e vediamo come è possibile personalizzarla. 
+
+
+9.1. I tipi di output predefiniti.
+----------------------------------
+
+I tipi di output attualmente disponibili sono:
+
+* ``'text'`` corrisponde al tipo Python ``unicode``;
+* ``'int_'`` corrisponde a ``int``;
+* ``'float_'`` corrisponde a ``float``;
+* ``'timestamp'`` corrisponde a ``datetime.datetime``
+* ``'date'`` corrisponde a ``datetime.date`` (o ``datetime.datetime``, ma solo la parte della data verrà renderizzata)
+* ``'time'`` corrisponde a ``datetime.datetime`` (ma solo la parte dell'ora verrà renderizzata)
+* ``'check'`` corrisponde a ``bool``, renderizzato come ``'X'`` oppure ``''``
+* ``'bool_'`` corrisponde a ``bool``, renderizzato come ``'T'`` oppure ``'F'``
+* ``'bool_01'`` da usare quando i boolean sono registrati nel database come ``int`` (0 - 1), renderizzato come ``'T'`` oppure ``'F'``
+
+.. note:: I tipi di Quickreport **corrispondono a tipi Python**, non a tipi del database (per le considerazioni fatte sopra). Se per esempio le date sono memorizzate nel database come stringhe, sarà vostro compito convertirle nel giusto tipo Python prima di passarle a Quickreport (molti driver di database fanno questo automaticamente, compreso Sqlite3). L'unica eccezione a questa regola è ``'bool_01'``, che viene messo a disposizione perché è molto comune registrare i boolean nei database come interi. 
+
+
+9.2. I renderer predefiniti di Quickreport.
+-------------------------------------------
+
+I renderer "standard", per ciascun tipo e per ciascun formato di output, sono definiti come una gerarchia di classi nel modulo ``output_types.py``. 
+
+Vi consigliamo di dare un'occhiata direttamente al codice del modulo per avere un'idea di come funziona: in ogni caso, la gerarchia è la seguente:
+
+* ``DefaultRenderer``: il genitore comune a tutti i renderer, che non fa (quasi) nulla;
+* ``TextRenderer(DefaultRenderer)``: usato per il formato di output in solo testo;
+* ``CsvRenderer(TextRenderer)``:usato per il formato di output su csv, è praticamente identico a ``TextRenderer``;
+* ``ScreenRenderer(TextRenderer)``: usato per il formato di output su schermo, è praticamente identico a ``TextRenderer``;
+* ``HtmlRenderer(TextRenderer)``: usato per il formato di output in html, è assolutamente identico a ``TextRenderer``;
+* ``ExcelRenderer(DefaultRenderer)``: usato per l'output in Excel, ridefinisce il rendering di tutti i tipi (perché Excel ha delle regole sue particolari...)
+
+
+9.3. Modificare i renderer predefiniti.
+---------------------------------------
+
+Se avete bisogno di cambiare il comportamento predefinito dei vari renderer, **non** dovreste modificare direttamente il codice di ``output_types.py``. Invece, QuickReport mette a disposizione il modulo ``<progetto>.output_types.py``, dove potete fare le vostre personalizzazioni.
+
+
+9.3.1. Modificare il rendering di un tipo per tutti i report.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Ecco un esempio: il rendering predefinito del tipo ``'date'`` per l'output in solo testo è ``'%d.%m.%Y'`` (lo potete verificare controllando ``output_types.TextRenderer``). Supponiamo che vogliate modificarlo. 
+
+Aprite ``<progetto>.output_types.py`` (per esercizio, potete farlo nel progetto della demo: ``chinook_demo.output_types.py``) e scrivete una sottoclasse di ``TextRenderer``. Nel modulo, la gerarchia delle classi-madri è importata nel namespace ``dfl_outputs.*``::
+
+    # file: <progetto>.output_types.py
+    class MyTextRenderer(dfl_outputs.TextRenderer):
+        def date(self, val): return val.strftime('nel giorno: %d, %m, %Y')
+
+Non vi resta che registrare questo nuovo renderer, per dire a Quickreport di usarlo: più in basso nel modulo, trovate il dizionario ``RENDERERS_TABLE``: modificatelo così::
+
+    # file: <progetto>.output_types.py
+    RENDERERS_TABLE = {
+                        ('text (tabs)', '*') : MyTextRenderer
+                      }
+                      
+Ecco fatto! Adesso tutti i report della demo che prevedono delle date (provate con ``employees``, ``invoices_by_country``, ``invoices_period``) avranno le date formattate come volete voi... solo per l'output "solo testo", beninteso. Se volete modificare anche per altri formati di output, registrate anche quelli in ``RENDERERS_TABLE``. 
+
+.. note:: Nella demo (quindi in ``chinook_demo.output_types``), abbiamo dichiarato un ``ChinookTextRenderer`` che modifica la formattazione standard delle date, mettendo per primo l'anno. Abbiamo applicato questo renderer agli otput su schermo di tutti i report: quindi, per esempio, se provate con ``employees``, vedrete che le date nella lista a schermo sono diverse da quelle del file di testo esportato. 
+
+
+9.3.2. Modificare il rendering di un tipo per un report specifico.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Avete notato che, per registrare il nostro renderer personalizzato, abbiamo usato la forma::
+
+    RENDERERS_TABLE = {('text (tabs)', '*') : MyTextRenderer}
+
+Quel ``'*'`` nella chiave comunica a Quickreport che ``MyTextRenderer`` deve essere usato per *tutti* i report, quando si produce un output di solo testo. 
+
+Se invece volete che ``MyTextRenderer`` sia usato solo per certi report specifici, non dovete fare altro che specificarlo. Per esempio::
+
+    # file: <progetto>.output_types.py
+    RENDERERS_TABLE = {
+                        ('text (tabs)', 'employees') : MyTextRenderer, 
+                        ('text (tabs)', 'invoices_period') : MyTextRenderer
+                      }
+
+applicherà ``MyTextRenderer`` solo ai report ``employees`` e  ``invoices_period``, ma non a ``invoices_by_country`` (che continuerà a usare il renderer di default). 
+
+
+9.3.3. Aggiungere un nuovo tipo di output.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Attualmente Quickreport non prevede un meccanismo di "plugin" per aggiungere dei nuovi tipi di output ai renderer già esistenti. 
+
+Tuttavia in Python una cosa del genere non è mai troppo difficile. Per esempio: nel database della demo, ci sono dei prezzi espressi come float. Naturalmente potete usare il tipo predefinito ``float_`` per renderizzarli, ma invece supponiamo che vogliate introdurre un nuovo tipo "currency" per gestire casi come questo. Tutto ciò che dovete fare è un po' di monkey-patching::
+
+    # file: <progetto>.output_types.py
+    def text_currency(self, val): 
+        return 'euro: ' + str(val) # solo un esempio...
+    
+    dfl_outputs.TextRenderer.currency = text_currency
+    
+Questo, semplicemente, aggiunge il nuovo tipo "currency" a ``TextRenderer`` e quindi automaticamente a tutte le sue sottoclassi (``CsvRenderer``, ``ScreenRenderer`` e ``HtmlRenderer``). Resta fuori solo ``ExcelRenderer``, per cui dovete naturalmente scrivere una funzione separata da iniettare. 
+
+
+9.4. ``DISALLOW_OUTPUT``: disabilitare un formato di output.
+------------------------------------------------------------
+
+Il modulo ``<progetto>.output_types.py`` ha ancora una impostazione che potrebbe esservi utile. Il dizionario ``DISALLOW_OUTPUT`` vi consente disabilitare un formato di output (per tutti i report, o solo per alcuni specifici). 
+
+L'uso è semplice: usate::
+
+    DISALLOW_OUTPUT = { '*' : ('nome_formato_output', ...) }
+
+per disabilitare i formati di output voluti per *tutti* i report. Usate::
+
+    DISALLOW_OUTPUT = { 'nick_report' : ('nome_formato_output', ...) }
+    
+per disabilitare i formati di output voluti solo per uno specifico report. 
+
+.. note:: nella demo, l'output in csv è disabilitato per tutti i report, mentre l'output in Excel è disabilitato solo per il report ``employees``.
+
+
+
+
+
+
+

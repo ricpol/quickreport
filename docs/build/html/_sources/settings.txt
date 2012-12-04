@@ -1,0 +1,140 @@
+# -*- coding: utf8 -*-
+
+
+3. Integrare Quickreport nella vostra applicazione.
+===================================================
+
+Prima di procedere oltre con la creazione dei report del vostro *progetto* (il sub-package ``<nome-progetto>`` che avete appena creato), è utile esaminare come il vostro progetto, una volta completo, si dovrà integrare nella gui della vostra *applicazione* wxPython. 
+
+.. note:: La cosa migliore è esaminare la demo: la mini-applicazione contenuta nel file  ``demo.py`` è un esempio di come impostare gli import e i settaggi iniziali. 
+
+
+3.1. ``QuickReportSettings`` : le impostazioni globali di Quickreport.
+----------------------------------------------------------------------
+
+Quickreport ha bisogno di conoscere alcune informazioni su come funziona il "mondo di sopra", ossia la vostra applicazione wxPython dentro cui vive. La porta di accesso a queste informazioni è ``QuickReportSettings``.
+
+Potete immaginarla come una "variabile globale", ma in realtà è un oggetto singleton: in questo modo, ogni volta che ne avete bisogno, basta istanziarlo di nuovo, ossia chiamare ``QuickReportSettings()``, per essere sicuri di ottenere la versione più aggiornata possibile delle impostazioni. 
+
+``QuickReportSettings`` non ha nessun metodo, di per sé: funziona solo come namespace per alcune variabili che devono essere condivise ovunque all'interno di Quickreport, e tra la vostra applicazione e Quickreport. 
+
+Attualmente, queste variabili sono: 
+
+* ``QuickReportSettings().current_project``: il nome del progetto Quickreport a cui è legata la vosta applicazione
+* ``QuickReportSettings().db``: una connessione aperta al database (vedi sotto)
+* ``QuickReportSettings().encoding``: l'encoding che Quickreport userà per generare i report in formato testo e html. Se non viene specificato, il valore di default è ``locale.getpreferredencoding()``. 
+
+  .. note:: Una precisazione importante: Quickreport si aspetta che le stringhe ottenute dal db siano tutte unicode: se il vostro database registra il testo in un encoding specifico, sarà vostro compito convertire. D'altra parte, anche wxPython maneggia internamente le stringhe come unicode, quindi questo è un problema che probabilmente dovete affrontare nella vostra applicazione a un livello più alto.
+
+* ``QuickReportSettings().HAVE_EXCEL``: se il modulo ``xlwt`` è correttamente installato, questa variabile è ``True``. Di norma non avete bisogno di toccare questa impostazione: se ``xlwt`` non è installato, semplicemente gli output Excel non saranno disponibili. Tuttavia, se sapete che ``xlwt`` è presente, ma non volete comunque gli output in Excel, potete manualmente impostare su ``False`` questa variabile.
+
+
+3.2. ``QuickReportSettings().db`` : la connessione al database.
+---------------------------------------------------------------
+
+Quickreport ha bisogno di lavorare con il database della vostra applicazione. ``QuickReportSettings().db`` è il modo che avete per comunicargli dove può trovarne una. 
+
+Questa variabile dovrebbe essere impostata su un oggetto-connessione aperto: in altre parole, un oggetto che supporti il metodo ``Cursor()``, il quale a sua volta avrà i metodi ``execute()``, ``fetchone()``, ``fetchall()``, secondo la consueta API Python per i database. 
+D'altra parte, siccome finirete per scrivere voi stessi tutto il codice che riguarda le interazioni con il database, potete regolarvi come preferite. Per esempio, potete passare a ``QuickReportSettings().db`` un hook per collegarsi a un ORM Sqlalchemy. 
+
+Nella demo, per semplificare, abbiamo lavorato con un normale database Sqlite, e il modulo ``sqlite3`` della libreria standard. 
+
+
+3.3. Importare Quickreport e impostare i settaggi.
+--------------------------------------------------
+
+Ancora una volta, il consiglio è di seguire la falsariga della demo, e in particolare il file ``demo.py``. Ciò che dovete fare si può riassumere in tre semplici passaggi.
+
+
+3.3.1 Il nome del progetto.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Nell'entry-point della vosta applicazione (il file dove definite la ``wx.App`` e chiamate il suo ``MainLoop``), dovete per prima cosa importare ``QuickReportSettings``
+e impostare il nome del progetto:: 
+
+    from quickreport.settings import QuickReportSettings
+    QuickReportSettings().current_project = 'mio_progetto'
+
+.. warning:: l'impostazione di ``QuickReportSettings().current_project`` va fatta prima di ogni altra cosa: in particolare, prima di importare qualunque altro nome dal package ``quickreport`` e prima di dichiarare ogni frame della vostra gui che userà Quickreport. Vi consigliamo (come è fatto nella demo) di inserire questa impostazione tra gli import iniziali del modulo. 
+
+
+3.3.2. Importare make_menu_report.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+La seconda cosa da fare è importare la funzione di utilità::
+
+    from quickreport.gui import make_menu_report
+    
+``make_menu_report`` (oltre a ``QuickReportSettings`` che abbiamo già visto) è l'unico pezzo di Quickreport che la vostra applicazione ha bisogno di conoscere. Vedremo più sotto come funziona esattamente. 
+
+``make_menu_report`` va importato in ogni modulo dove ce n'è bisogno: ossia, in ogni modulo dove un frame ha bisogno di integrare Quickreport tra i suoi menu. 
+
+
+3.3.3. Impostare QuickReportSettings.
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+La terza cosa da fare è impostare le altre variabili che desiderate di ``QuickReportSettings``. In particolare è necessario impostare ``QuickReportSettings().db``. Potete farlo nell'``__init__`` del vostro frame principale, ma in wxPython è buona pratica che le connessioni al database (e ai log, e a tutte le altre risorse esterne) vengano gestite al livello superiore della ``wx.App``. 
+
+Di conseguenza, create una vostra ``wx.App`` e fate le impostazioni necessarie nel suo ``OnInit``. Per esempio, nella demo ecco che cosa succede::
+
+    class MyApp(wx.App):
+        def OnInit(self):
+            self.db = sqlite3.connect('chinook.sqlite', 
+                                      detect_types=sqlite3.PARSE_DECLTYPES)
+            QuickReportSettings().db = self.db 
+            QuickReportSettings().encoding = 'utf-8'
+            return True
+
+Notate che, oltre a ``db``, nella demo abbiamo anche colto l'occasione per settare esplicitamente ``QuickReportSettings().encoding``. 
+
+
+3.3.4. Riassumendo...
+^^^^^^^^^^^^^^^^^^^^^
+
+Riassumendo::
+
+    # primo, il nome del progetto:
+    from quickreport.settings import QuickReportSettings
+    QuickReportSettings().current_project = 'mio_progetto'
+    # secondo, importare make_menu_report:
+    from quickreport.gui import make_menu_report
+    # terzo, impostare la connessione al database:
+    class MyApp(wx.App):
+            def OnInit(self):
+                self.db = sqlite3.connect(...)
+                QuickReportSettings().db = self.db 
+                return True
+
+
+3.4. Variabili personalizzate in QuickReportSettings.
+-----------------------------------------------------
+
+``QuickReportSettings`` è una scatola che Quickreport condivide apertamente con la vostra applicazione: potete metterci dentro tutto quello che vi serve. 
+
+Per esempio, nella demo simuliamo che l'utente sia passato attraverso una procedura di login, e, una volta riconosciuto, lo diciamo a Quickreport in questo modo::
+
+    QuickReportSettings().current_user = 1 # l'id dell'utente connesso
+
+Questo, nel progetto della demo, ci servirà in seguito per (dis)abilitare certi report in funzione dell'utente connesso. 
+
+
+3.5. Usare Quickreport nella vostra gui.
+----------------------------------------
+
+Quickreport mette a disposizione dei menu, generati automaticamente. I menu contengono l'elenco dei vari report disponibili. Vedremo nel prossimo capitolo come impostare i menu. Per il momento, basta dire che è necessario avere almeno un menu "principale", ma Quickreport supporta anche la creazione di diversi menu, da inserire in punti diversi della vostra interfaccia. 
+
+Ogni volta che avete bisogno di un menu, basta richiamare::
+
+    menu = make_menu_report(self) # 'self' è il frame dove appare il menu
+
+``make_menu_report`` restituisce un ``wx.Menu`` già pronto all'uso, che può essere inserito normalmente in una ``wx.MenuBar``, ma anche dentro un altro ``wx.Menu`` (come sotto-menu), oppure come menu contestuale o dentro un ``wx.PopupMenu``. 
+
+Chiamare ``make_menu_report(self)`` senza altri argomenti restituisce il "menu principale". Se avete creato altri menu in aggiunta al primo, per usare questi potete invece fare::
+
+    menu = make_menu_report(self, 'nome_menu')
+
+Nella demo, per esempio, la chiamata ``make_menu_report(self, 'context')`` genera un piccolo menu contestuale che viene inserito in un ``wx.PopupMenu`` in risposta al right-click su una finestra. 
+
+
+
+

@@ -1,0 +1,48 @@
+# -*- coding: utf8 -*-
+
+
+4. I primi passi: organizzare i menu dei report.
+================================================
+
+4.1. Dare un nome ai vostri report.
+-----------------------------------
+
+Una volta creato il vostro nuovo progetto, la prima cosa da fare è decidere il nome dei vostri report. Ogni report deve avere
+
+* un nick breve, che userete internamente per identificare il report; 
+* un nome lungo, che appare nei menu e come titolo nei vari output
+
+Aprire il modulo ``<progetto>.params`` e rimpite il dizionario ``REP_NAMES`` con i nomi dei vostri report, usando lo schema ``{'nome_lungo':'nick'}``
+
+
+4.2. Organizzare i report nei menu.
+-----------------------------------
+
+I menu sono il modo in cui Quickreport gestirà l'accesso ai report nella gui della vostra applicazione. Quindi, la seconda cosa da fare, è dichiarare come deve essere fatto l'albero del menu dei report. 
+
+Quickreport può gestire anche più menu differenti:  il dizionrio ``<progetto>.params.REPORT_MENUS`` deve contenere almeno il ``'main_menu'``, che è il menu "principale"; ma potete aggiungere altri menu, con il nome che preferite. In ogni caso, per prima cosa dovete completare il ``'main_menu'`` inserendo i nomi dei report che volete elencare in questo menu. 
+
+Nella forma più semplice, ``'main_menu'`` (e tutti gli altri che volete dichiarare) è una tupla di stringhe. Però potete inserire dei sotto-menu usando delle tuple annidate. Una stringa vuota, inoltre, produce un separatore. La demo di Quickreport presenta un menu con un albero complesso: la cosa migliore è esaminare il ``'main_menu'`` che lo produce, per prendere spunto. 
+
+.. note:: le stringhe del ``'main_menu'`` devono corrispondere ai "nomi lunghi" dei vari report, non ai loro nick. Questa, in effetti, è l'unica volta che userete i nomi lunghi per identificare i report. Il motivo è semplice: potete inserire all'interno del nome lungo anche i simboli per le scorciatoie da tastiera, se lo desiderate, secondo le normali convenzioni di wxPython. Di nuovo, osservate il ``'main_menu'`` della demo se non ricordate come si fa. 
+
+Se volete aggiungere alri menu oltre il ``'main_menu'``, potete farlo, dando a questi altri menu i nomi che preferite. Nella demo, per esempio, troverete definito anche un menu secondario ``'context_menu'``.
+
+
+4.3. ``enable_menus.py``: disabilitare le voci dei menu.
+--------------------------------------------------------
+
+Talvolta si rende necessario disabilitare qualche voce del menu: siccome si tratta di casi non frequenti, Quickreport vi permette di farlo in un apposito modulo separato, per non complicare troppo l'utilizzo di ``params.py``. 
+
+Il modulo da usare per questi casi è ``<progetto>.enable_menus.py``. Per ciascuna voce di menu che desiderate abilitare, scrivete una funzione in questo modulo: la funzione deve ritornare ``True`` o ``False``. Dopo di che, registrate la funzione nel dizionario ``DISPATCH_TABLE``, secondo questa logica::
+
+    DISPATCH_TABLE = { 'nick_del_report' : funzione }
+
+Quickreport valuta la vostra funzione al momento di disegnare il menu nella vostra gui, e (dis)abilita la voce di conseguenza. 
+
+La funzione che scrivete, naturalmente, potrà tener conto di fattori "esterni" per decidere se abilitare o meno la voce del menu. Usate ``QuickReportSettings`` come intermediario per comunicare alla vostra funzione qualunque stato "globale" della vostra applicazione. 
+
+.. note:: Per esempio, nella demo il report ``employees`` è abilitato solo se l'utente loggato è il capo, oppure uno dei suoi diretti sottoposti (come da organigramma riportato nel database). Per ottenere questo, abbiamo impostato una variabile ``QuickReportSettings.current_user = 1`` nella nostra gui  ``demo.py`` (in realtà avremmo dovuto scrivere una procedura di login vera e propria... ma perché preoccuparsi di questi dettagli?!). Poi abbiamo usato questa variabile in ``enable_menus`` per decidere se abilitare la voce di menu. Se provate a modificare il valore di ``current_user``, vedrete che il report ``employees`` sarà disabilitato. 
+
+
+

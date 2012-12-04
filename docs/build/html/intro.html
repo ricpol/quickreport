@@ -1,0 +1,132 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Introduzione a Quickreport. &mdash; QuickReport v0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="QuickReport v0.1.0 documentation" href="index.html" />
+    <link rel="next" title="2. Come iniziare a usare Quickreport." href="iniziare.html" />
+    <link rel="prev" title="Quickreport docs" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="iniziare.html" title="2. Come iniziare a usare Quickreport."
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Quickreport docs"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">QuickReport v0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p># -<em>- coding: utf8 -</em>-</p>
+<div class="section" id="introduzione-a-quickreport">
+<h1>1. Introduzione a Quickreport.<a class="headerlink" href="#introduzione-a-quickreport" title="Permalink to this headline">¶</a></h1>
+<p>Quickreport è un framework per la generazione automatica di report nelle applicazioni wxPython.
+Quickreport vi permette di:</p>
+<ul class="simple">
+<li>generare dei menu di reportistica da inserire nella gui della vostra applicazione;</li>
+<li>per ciascun report, generare automaticamente una finestra per l&#8217;inserimento dei parametri necessari;</li>
+<li>generare automaticamente il report in base ai parametri scelti, con vari possibili output: attualmente sono previste uscite in txt, csv, html, excel (grazie a <tt class="docutils literal"><span class="pre">xlwt</span></tt>), e lista a video.</li>
+</ul>
+<p>L&#8217;api di Quickreport mira a essere semplice da usare per le i casi più comuni, e al tempo stesso abbastanza flessibile da gestire anche casi più complessi, con solo un po&#8217; più di fatica da parte vostra.
+Tra le altre cose, potete per esempio:</p>
+<ul class="simple">
+<li>definire diversi menu di reportistica, da richiamare in punti diversi della vostra gui;</li>
+<li>definire valori di default per i parametri, e ricalcolare dinamicamente un parametro in funzione del valore degli altri;</li>
+<li>gestire la possibilità che un parametro abbia valore Null;</li>
+<li>personalizzare il rendering dei vari tipi di dato in output, complessivamente o separatamente per ciascun report e ciascun tipo di output. Per esempio, potete volere che le date siano formattate in modi diversi a seconda dei report.</li>
+</ul>
+<p>Inoltre, è facile estendere le funzionalità di Quickreport. Potete per esempio</p>
+<ul class="simple">
+<li>aggiungere nuovi tipi di parametri di input;</li>
+<li>aggiungere o modificare i renderer per i dati in output;</li>
+<li>aggiungere nuovi tipi di output, etc.</li>
+</ul>
+<p>Detto questo, Quickreport non è un RAD: avete comunque la resposabilità di scrivere del codice. In particolare, Quickreport non automatizza (quasi) in nessun modo il rapporto con il database: dovrete scrivervi da soli il codice che estrae i dati occorrenti per il report.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Quickreport docs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="iniziare.html"
+                        title="next chapter">2. Come iniziare a usare Quickreport.</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="iniziare.html" title="2. Come iniziare a usare Quickreport."
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Quickreport docs"
+             >previous</a> |</li>
+        <li><a href="index.html">QuickReport v0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Riccardo Polignieri.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+  </body>
+</html>
